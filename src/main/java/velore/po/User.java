@@ -25,7 +25,7 @@ public class User {
      * 数据库id
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 用户自定义的id

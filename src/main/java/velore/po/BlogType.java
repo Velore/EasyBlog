@@ -23,7 +23,7 @@ public class BlogType implements Comparable<BlogType>{
      * 标签id
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 类型名

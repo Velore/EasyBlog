@@ -24,7 +24,7 @@ public class Blog {
      * blog id
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 类型
@@ -33,7 +33,7 @@ public class Blog {
     /**
      * 发布者
      */
-    private Long userId;
+    private Integer userId;
     /**
      *标题
      */

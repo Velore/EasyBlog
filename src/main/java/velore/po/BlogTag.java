@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
 public class BlogTag {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long blogId;
+    private Integer blogId;
 
-    private Long tagId;
+    private Integer tagId;
 }

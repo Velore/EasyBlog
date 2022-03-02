@@ -23,7 +23,7 @@ public class Tag implements Comparable<Tag>{
      * 标签id
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 标签名

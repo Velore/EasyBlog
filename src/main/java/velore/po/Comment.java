@@ -25,17 +25,17 @@ public class Comment {
      * 评论id
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 评论所在的blog id
      */
-    private Long blogId;
+    private Integer blogId;
 
     /**
      * 评论发布者id
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 评论内容
