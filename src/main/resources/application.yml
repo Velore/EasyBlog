@@ -1,0 +1,39 @@
+spring:
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+
+  datasource:
+    druid:
+      username: root
+      password: root
+      url: jdbc:mysql://localhost:6666/easy_blog?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initial-size: 5
+      max-active: 10
+      min-idle: 5
+      max-wait: 60000
+      poolPreparedStatements: true
+
+      filters: stat,wall,log4j
+      maxPoolPreparedStatementPerConnectionSize: 20
+      useGlobalDataSourceStat: true
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  main:
+    allow-bean-definition-overriding: true
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    call-setters-on-nulls: true
+    # 下划线命名 <---> 驼峰命名
+    map-underscore-to-camel-case: true
+    # 别名所在的package
+  type-aliases-package: com.czh.po
+  global-config:
+    db-config:
+      # 自动更新id的值
+      id-type: auto
+      # 字段为 null 或 “” 时不更新
+      update-strategy: not_empty
