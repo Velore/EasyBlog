@@ -3,6 +3,7 @@ package velore.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Component
 @TableName("comment")
+@ApiModel("评论")
 public class Comment {
 
     /**
@@ -30,7 +32,7 @@ public class Comment {
     /**
      * 评论所在的blog id
      */
-    private Integer blogId;
+    private Integer articleId;
 
     /**
      * 评论发布者id

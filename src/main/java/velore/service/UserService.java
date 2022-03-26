@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.UserQueryBo;
 import velore.po.User;
 import velore.vo.request.UserLoginRequest;
+import velore.vo.request.UserUpdateRequest;
 
 import java.util.List;
 
@@ -31,27 +32,29 @@ public interface UserService extends IService<User> {
 
     /**
      * 用户信息更新
-     *
-     * @param user 更新信息的用户
+     * @param token 用户登录token
+     * @param updateRequest 更新信息的用户
      * @return 是否更新成功
      */
-    int updateUser(User user);
+    int updateUser(String token, UserUpdateRequest updateRequest);
 
     /**
      * 封禁用户
      * 修改userType: 1 -> 3
-     * @param id id
+     * @param token 管理员token
+     * @param banId id
      * @return 是否封禁成功
      */
-    int ban(int id);
+    int ban(String token, int banId);
 
     /**
      * 解除封禁
      * 修改userType: 3 -> 1
-     * @param id id
+     * @param token 管理员token
+     * @param banId id
      * @return 是否解除成功
      */
-    int permit(int id);
+    int permit(String token, int banId);
 
     /**
      * 删除用户

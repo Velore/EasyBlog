@@ -3,6 +3,7 @@ package velore.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,13 +19,14 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
-@TableName("blog_tag")
-public class BlogTag {
+@TableName("article_tag")
+@ApiModel("文章标签")
+public class ArticleTag {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private Integer blogId;
+    private Integer articleId;
 
     private Integer tagId;
 }

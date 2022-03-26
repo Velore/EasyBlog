@@ -3,6 +3,7 @@ package velore.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 @TableName("tag")
+@ApiModel("标签")
 public class Tag implements Comparable<Tag>{
 
     /**
@@ -38,10 +40,10 @@ public class Tag implements Comparable<Tag>{
     /**
      * 使用该标签的文章数量
      */
-    private Integer blogNum;
+    private Integer articleNum;
 
     @Override
     public int compareTo(Tag tag) {
-        return blogNum - tag.blogNum;
+        return articleNum - tag.articleNum;
     }
 }

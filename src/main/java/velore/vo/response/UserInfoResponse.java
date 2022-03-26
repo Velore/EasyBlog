@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserInfoResponse {
 
-    private String userId;
+    private String userRegId;
 
     private String username;
 
@@ -31,7 +31,7 @@ public class UserInfoResponse {
     private LocalDateTime updateTime;
 
     public UserInfoResponse(User user){
-        userId = user.getUserRegId();
+        userRegId = user.getUserRegId();
         username = user.getUsername();
         phone = user.getPhone();
         email = user.getEmail();

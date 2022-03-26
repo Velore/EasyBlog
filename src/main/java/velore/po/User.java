@@ -3,6 +3,7 @@ package velore.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Component
 @TableName("user")
+@ApiModel("用户")
 public class User {
 
     /**
@@ -40,7 +42,7 @@ public class User {
     private String phone;
     private String email;
     private String avatar;
-    private Integer userType;
+    private UserType userType;
 
     /**
      * 注册时间

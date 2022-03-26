@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserQueryBo {
 
-    private String userId;
+    private String userRegId;
 
     private String phone;
 

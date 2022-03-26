@@ -3,6 +3,7 @@ package velore.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
-@TableName("blog")
-public class Blog {
+@TableName("article")
+@ApiModel("文章")
+public class Article {
 
     /**
      * blog id
@@ -29,7 +31,7 @@ public class Blog {
     /**
      * 类型
      */
-    private Integer blogType;
+    private Integer blogTypeId;
     /**
      * 发布者
      */
@@ -53,19 +55,24 @@ public class Blog {
     /**
      * 是否隐藏
      */
-    private boolean visible;
+    private Boolean visible;
     /**
      * 是否可评论
      */
-    private boolean commentable;
+    private Boolean commentable;
     /**
      * 是否被推荐
      */
-    private boolean recommend;
+    private Boolean recommend;
     /**
      * 状态
      */
     private Integer status;
+
+    /**
+     * 发布时间
+     */
+    private LocalDateTime publishTime;
 
     private LocalDateTime createTime;
 

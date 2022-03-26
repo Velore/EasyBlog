@@ -1,4 +1,8 @@
+drop database easy_blog;
+
 create database if not exists easy_blog character set utf8;
+
+use easy_blog;
 
 drop table if exists `user`;
 
@@ -16,20 +20,20 @@ create table if not exists `user`(
     update_time datetime not null comment '更新时间'
 )comment '用户';
 
-drop table if exists blog_type;
+drop table if exists article_type;
 
-create table if not exists blog_type(
+create table if not exists article_type(
     id int not null primary key auto_increment,
     name varchar(16) not null comment '类型名',
     level int not null default 1 comment '类型等级',
     description varchar(100) null default null comment '类型描述'
 )comment '文章类型';
 
-drop table if exists blog;
+drop table if exists article;
 
-create table if not exists blog(
+create table if not exists article(
     id int not null primary key auto_increment,
-    blog_type int not null default 1 comment '文章类型',
+    article_type int not null default 1 comment '文章类型',
     user_id int not null comment '作者id',
     title varchar(16) not null comment '文章标题',
     content text not null comment '文章内容',
@@ -61,7 +65,7 @@ drop table if exists comment;
 
 create table if not exists comment(
     id int not null primary key auto_increment,
-    blog_id int not null comment '文章id',
+    article_id int not null comment '文章id',
     user_id int not null comment '评论用户id',
     content text not null comment '评论内容',
     create_time datetime not null default now() comment '发布时间'
@@ -71,7 +75,7 @@ drop table if exists blog_tag;
 
 create table if not exists blog_tag(
     id int not null primary key auto_increment,
-    blog_id int not null comment '文章id',
+    article_id int not null comment '文章id',
     tag_id int not null comment '标签id'
 )comment '文章的标签';
 
@@ -84,3 +88,15 @@ insert into blog_type(name, level, description) values
 ('技术类', 1, '技术类文章的标签')
 ,('杂谈类', 1, '杂谈类文章的标签');
 
+insert into tag(name, description, blog_num) values
+('前端', '前端标签', 0),('Java', 'Java标签', 0),('mysql', 'mysql标签', 0);
+
+insert into article(user_id, title, content, views, like_num, status, publish_time, create_time, update_time) values
+(3, '文章1', 'aaa', 0, 0, 1, '2022-3-2 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11')
+,(3, '文章2', '111', 0, 0, 1, '2022-3-2 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11');
+
+insert into comment(article_id, user_id, content) values
+(1, 1, '好文章'),(2, 2, '第二篇好文章');
+
+insert into blog_tag(article_id, tag_id) values
+(1, 1), (1, 2);

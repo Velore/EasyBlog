@@ -2,12 +2,12 @@ package velore.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -25,7 +25,7 @@ import java.util.List;
 public class SwaggerConfig {
 
     @Bean
-    public Docket webApiConfig(){
+    public Docket docket(){
         ParameterBuilder builder = new ParameterBuilder();
         List<Parameter> parameterList = new ArrayList<>();
         builder.name("token").description("登录令牌token")
@@ -35,22 +35,28 @@ public class SwaggerConfig {
                 .build();
         parameterList.add(builder.build());
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("webApi")
-                .apiInfo(webApiInfo())
+                .apiInfo(apiInfo())
+                .enable(true)
+                .groupName("All")
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("velore.controller"))
                 .paths(PathSelectors.any())
                 .build()
-                .globalOperationParameters(parameterList);
+                .globalOperationParameters(parameterList)
+                ;
 
     }
 
-    private ApiInfo webApiInfo(){
-
-        return new ApiInfoBuilder()
-                .title("EasyBlog")
-                .description("EasyBlog desc")
-                .version("1.0")
-                .build();
+    public ApiInfo apiInfo(){
+        return new ApiInfo(
+                "EasyBlog API",
+                "StrayAnimalsManagementSystem",
+                "v1.0",
+                "https://github.com/Velore",
+                new Contact("HexTechGDUT", "https://github.com", ""),
+                "Apache 2.0",
+                "https://www.apache.org/licenses/LICENSE-2.0",
+                new ArrayList<>()
+        );
     }
 }

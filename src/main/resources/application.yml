@@ -1,3 +1,4 @@
+
 spring:
   mvc:
     format:
@@ -7,7 +8,7 @@ spring:
     druid:
       username: root
       password: root
-      url: jdbc:mysql://localhost:6666/easy_blog?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      url: jdbc:mysql://localhost:3306/easy_blog?useSSL=false&useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
       driver-class-name: com.mysql.cj.jdbc.Driver
       initial-size: 5
       max-active: 10
@@ -18,6 +19,7 @@ spring:
       filters: stat,wall,log4j
       maxPoolPreparedStatementPerConnectionSize: 20
       useGlobalDataSourceStat: true
+      #  慢sql检测
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   main:
     allow-bean-definition-overriding: true
@@ -37,3 +39,5 @@ mybatis-plus:
       id-type: auto
       # 字段为 null 或 “” 时不更新
       update-strategy: not_empty
+server:
+  port: 7777

@@ -38,6 +38,13 @@ public interface TokenService{
      * @param token token
      * @return uid
      */
-    String getTokenId(String token);
+    int getTokenId(String token);
+
+    /**
+     * 获取用户权限
+     * @param token token
+     * @return 用户权限
+     */
+    int getTokenAuth(String token);
 }
 
