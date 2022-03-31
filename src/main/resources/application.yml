@@ -24,15 +24,16 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+
 mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath*:mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     call-setters-on-nulls: true
     # 下划线命名 <---> 驼峰命名
     map-underscore-to-camel-case: true
     # 别名所在的package
-  type-aliases-package: com.czh.po
+  type-aliases-package: velore.po
   global-config:
     db-config:
       # 自动更新id的值

@@ -12,6 +12,8 @@ import java.util.List;
  **/
 public interface ArticleService extends IService<Article> {
 
+    int getCount();
+
     /**
      * 新增Article
      * @param article article

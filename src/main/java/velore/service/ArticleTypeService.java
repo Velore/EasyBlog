@@ -11,6 +11,8 @@ import java.util.List;
  **/
 public interface ArticleTypeService extends IService<ArticleType> {
 
+    int getCount();
+
     /**
      * 添加
      * @param type type

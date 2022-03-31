@@ -15,6 +15,12 @@ import java.util.List;
 public interface UserService extends IService<User> {
 
     /**
+     * 获取用户数量
+     * @return
+     */
+    int getCount();
+
+    /**
      * 用户注册
      * 注册时只能使用userId
      * @param loginRequest login

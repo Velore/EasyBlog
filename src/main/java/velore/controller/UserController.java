@@ -1,15 +1,17 @@
 package velore.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import result.Result;
+import result.ResultType;
 import velore.constants.Constant;
 import velore.po.User;
 import velore.security.TokenService;
 import velore.service.UserService;
-import velore.utils.ResultUtil;
 import velore.vo.request.UserLoginRequest;
+import velore.vo.request.UserUpdateRequest;
 import velore.vo.response.UserInfoResponse;
-import velore.vo.result.Result;
-import velore.vo.result.ResultType;
 
 import javax.annotation.Resource;
 
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
+@Api("用户")
 public class UserController {
 
     @Resource
@@ -28,36 +31,30 @@ public class UserController {
     @Resource
     private TokenService tokenService;
 
-    @PostMapping("login")
-    public Result<String> login(@RequestBody UserLoginRequest loginRequest) {
-        String token = userService.login(loginRequest);
-        return ResultUtil.success(token);
+    @ApiOperation("hello")
+    @GetMapping("/hello")
+    public Result<String> hello(){
+        return Result.success("hello");
     }
 
-    @PostMapping("register")
+    @ApiOperation("注册")
+    @PostMapping("/register")
     public Result<String> register(@RequestBody UserLoginRequest loginRequest){
         return userService.register(loginRequest) == 1 ?
-                ResultUtil.success() : ResultUtil.fail(ResultType.SYSTEM_ERROR) ;
+                Result.success() : Result.fail(ResultType.SYSTEM_ERROR) ;
     }
 
-//    /**
-//     * 验证请求头中的token的接口
-//     * @param token token
-//     * @return string result
-//     */
-//    @GetMapping("verify")
-//    public Result<String> verify(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
-//        try{
-//            tokenService.verify(token);
-//        }catch (Exception e){
-//            return ResultUtil.fail(ResultType.TOKEN_EXPIRE);
-//        }
-//        return ResultUtil.success();
-//    }
+    @ApiOperation("登录")
+    @PostMapping("/login")
+    public Result<String> login(@RequestBody UserLoginRequest loginRequest) {
+        String token = userService.login(loginRequest);
+        return Result.success(token);
+    }
 
-    @GetMapping("refresh")
+    @ApiOperation("刷新token")
+    @GetMapping("/refresh")
     public Result<String> refresh(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
-        return ResultUtil.success(tokenService.refresh(token));
+        return Result.success(tokenService.refresh(token));
     }
 
     /**
@@ -65,13 +62,23 @@ public class UserController {
      * @param token token
      * @return user info
      */
-    @GetMapping("getUserInfo")
+    @ApiOperation("根据请求头中的token返回用户信息")
+    @GetMapping("/getUserInfo")
     public Result<UserInfoResponse> getUserInfo(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
-        User user = userService.queryUserById(Integer.parseInt(tokenService.getTokenId(token)));
+        User user = userService.queryUserById(tokenService.getTokenId(token));
         if(user == null){
-            return ResultUtil.fail(ResultType.USER_NOT_EXISTS);
+            return Result.fail(ResultType.USER_NOT_EXISTS);
         }
-        return ResultUtil.success(new UserInfoResponse(user));
+        return Result.success(new UserInfoResponse(user));
+    }
+
+    @ApiOperation("更新用户信息")
+    @PostMapping("updateUser")
+    public Result<UserInfoResponse> updateUser(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token,
+            @RequestBody UserUpdateRequest updateRequest){
+        return userService.updateUser(token, updateRequest) == 1 ?
+                Result.success() : Result.fail(ResultType.SYSTEM_ERROR) ;
     }
 
 }

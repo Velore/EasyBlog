@@ -11,6 +11,8 @@ import java.util.List;
  **/
 public interface TagService extends IService<Tag> {
 
+    int getCount();
+
     /**
      * 新增标签
      * @param tag tag
@@ -44,6 +46,13 @@ public interface TagService extends IService<Tag> {
      * @return
      */
     Tag queryTagById(Integer id);
+
+    /**
+     * 随机获取指定数量的tag
+     * @param num num
+     * @return
+     */
+    List<Tag> queryRandomTag(Integer num);
 
     /**
      * 通过标签名查询标签

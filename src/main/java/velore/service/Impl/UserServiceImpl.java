@@ -5,13 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import velore.bo.UserQueryBo;
-import velore.constants.UserConstant;
 import velore.dao.UserMapper;
+import velore.exception.InvalidParamException;
 import velore.po.User;
+import velore.po.UserType;
 import velore.security.TokenService;
 import velore.service.UserService;
-import velore.utils.Md5Util;
+import utils.Md5Util;
 import velore.vo.request.UserLoginRequest;
+import velore.vo.request.UserUpdateRequest;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,6 +30,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private TokenService tokenService;
+
+    @Override
+    public int getCount() {
+        return baseMapper.getCount();
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -50,44 +57,55 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 loginRequest.getIdentifier());
         User user = userService.queryUserByUserQueryBo(queryBo);
         if(user == null){
-            throw new RuntimeException("帐号不存在");
+            throw new InvalidParamException("帐号不存在");
         }
         if(!Md5Util.verify(loginRequest.getPassword(), user.getPassword())){
-            throw new RuntimeException("密码错误");
+            throw new InvalidParamException("密码错误");
         }
         return tokenService.generate(user);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateUser(User user) {
+    public int updateUser(String token, UserUpdateRequest updateRequest) {
+        User user = userService.queryUserById(tokenService.getTokenId(token));
+        if(user == null){
+            throw new InvalidParamException("用户不存在");
+        }
+        user.setPhone(updateRequest.getPhone());
+        user.setEmail(updateRequest.getEmail());
+        user.setUsername(updateRequest.getUsername());
+        user.setPassword(updateRequest.getPassword());
+        user.setAvatar(updateRequest.getAvatar());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         //更新密码可以选择另外多写一个方法，但是这里为了方便，设置所有属性都可以一起更新
-        wrapper.eq("id", user.getId());
+        wrapper.eq("id", tokenService.getTokenId(token));
         return baseMapper.update(user, wrapper);
     }
 
     @Override
-    public int ban(int id) {
-        User user = userService.queryUserById(id);
-        if(!UserConstant.USER_TYPE_ORDINARY.equals(user.getUserType())){
+    @Transactional(rollbackFor = Exception.class)
+    public int ban(String token, int banId) {
+        User user = userService.queryUserById(banId);
+        if(!UserType.ORDINARY.equals(user.getUserType())){
             return 1;
         }
-        user.setUserType(3);
+        user.setUserType(UserType.FORBID);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("id", id);
+        wrapper.eq("id", banId);
         return baseMapper.updateById(user);
     }
 
     @Override
-    public int permit(int id) {
-        User user = userService.queryUserById(id);
-        if(!UserConstant.USER_TYPE_FORBID.equals(user.getUserType())){
+    @Transactional(rollbackFor = Exception.class)
+    public int permit(String token, int banId) {
+        User user = userService.queryUserById(banId);
+        if(!UserType.FORBID.equals(user.getUserType())){
             return 1;
         }
-        user.setUserType(1);
+        user.setUserType(UserType.ORDINARY);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("id", id);
+        wrapper.eq("id", banId);
         return baseMapper.updateById(user);
     }
 
@@ -97,7 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("id", id);
         User user = baseMapper.selectOne(wrapper);
-        user.setUserType(-1);
+        user.setUserType(UserType.DELETE);
         return baseMapper.update(user, wrapper);
     }
 
@@ -112,8 +130,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User queryUserByUserQueryBo(UserQueryBo queryBo) {
         User user;
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        if(queryBo.getUserId()!=null){
-            wrapper.eq("user_id", queryBo.getUserId());
+        if(queryBo.getUserRegId()!=null){
+            wrapper.eq("user_reg_id", queryBo.getUserRegId());
             user = baseMapper.selectOne(wrapper);
             if(user!=null){
                 return user;
@@ -137,7 +155,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<User> queryUserLikeName(String name) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like("user_name", name);
+        wrapper.like("user_name", name).eq(false, "user_type", -1);
         return baseMapper.selectList(wrapper);
     }
 

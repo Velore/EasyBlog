@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 @TableName("article_type")
 @ApiModel("文章类型")
+@Alias("ArticleType")
 public class ArticleType implements Comparable<ArticleType>{
 
     /**

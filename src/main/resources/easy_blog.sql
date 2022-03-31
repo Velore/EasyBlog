@@ -71,9 +71,9 @@ create table if not exists comment(
     create_time datetime not null default now() comment '发布时间'
 )comment '评论';
 
-drop table if exists blog_tag;
+drop table if exists article_tag;
 
-create table if not exists blog_tag(
+create table if not exists article_tag(
     id int not null primary key auto_increment,
     article_id int not null comment '文章id',
     tag_id int not null comment '标签id'
@@ -84,7 +84,7 @@ insert into user(user_reg_id, username, password, user_type, last_login_time, cr
 ,('admin2', 'admin2', 'admin2', 0, now(), '2022-3-1 12:12:12', now())
 ,('user1', 'user1', '123', 1, now(), '2022-3-2 11:11:11', now());
 
-insert into blog_type(name, level, description) values
+insert into article_type(name, level, description) values
 ('技术类', 1, '技术类文章的标签')
 ,('杂谈类', 1, '杂谈类文章的标签');
 
@@ -98,5 +98,5 @@ insert into article(user_id, title, content, views, like_num, status, publish_ti
 insert into comment(article_id, user_id, content) values
 (1, 1, '好文章'),(2, 2, '第二篇好文章');
 
-insert into blog_tag(article_id, tag_id) values
+insert into article_tag(article_id, tag_id) values
 (1, 1), (1, 2);

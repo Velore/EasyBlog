@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 @TableName("tag")
 @ApiModel("标签")
+@Alias("Tag")
 public class Tag implements Comparable<Tag>{
 
     /**
