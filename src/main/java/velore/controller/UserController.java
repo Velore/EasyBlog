@@ -14,6 +14,7 @@ import velore.vo.request.UserUpdateRequest;
 import velore.vo.response.UserInfoResponse;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Velore
@@ -40,15 +41,14 @@ public class UserController {
     @ApiOperation("注册")
     @PostMapping("/register")
     public Result<String> register(@RequestBody UserLoginRequest loginRequest){
-        return userService.register(loginRequest) == 1 ?
-                Result.success() : Result.fail(ResultType.SYSTEM_ERROR) ;
+        userService.register(loginRequest);
+        return Result.success();
     }
 
     @ApiOperation("登录")
     @PostMapping("/login")
     public Result<String> login(@RequestBody UserLoginRequest loginRequest) {
-        String token = userService.login(loginRequest);
-        return Result.success(token);
+        return Result.success(userService.login(loginRequest));
     }
 
     @ApiOperation("刷新token")
@@ -66,19 +66,50 @@ public class UserController {
     @GetMapping("/getUserInfo")
     public Result<UserInfoResponse> getUserInfo(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
         User user = userService.queryById(tokenService.getTokenId(token));
-        if(user == null){
-            return Result.fail(ResultType.USER_NOT_EXISTS);
-        }
         return Result.success(new UserInfoResponse(user));
     }
 
     @ApiOperation("更新用户信息")
-    @PostMapping("updateUser")
-    public Result<UserInfoResponse> updateUser(
+    @PostMapping("/updateUser")
+    public Result<String> updateUser(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token,
             @RequestBody UserUpdateRequest updateRequest){
-        return userService.update(token, updateRequest) == 1 ?
-                Result.success() : Result.fail(ResultType.SYSTEM_ERROR) ;
+        userService.update(token, updateRequest);
+        return Result.success();
+    }
+
+    @ApiOperation("封禁用户")
+    @GetMapping("/ban/{userId}")
+    public Result<String> ban(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String userId){
+        userService.ban(token, Integer.parseInt(userId));
+        return Result.success();
+    }
+
+    @ApiOperation("解封用户")
+    @GetMapping("/permit/{userId}")
+    public Result<String> permit(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String userId){
+        userService.permit(token, Integer.parseInt(userId));
+        return Result.success();
+    }
+
+    @ApiOperation("根据名字模糊查询用户")
+    @GetMapping("/queryUserLikeName/{name}")
+    public Result<List<User>> queryUserLikeName(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String name){
+        if(!Constant.ADMIN_ID_SET.contains(tokenService.getTokenId(token))){
+            return Result.fail(ResultType.NO_PERMIT);
+        }
+        return Result.success(userService.queryLikeName(name));
+    }
+
+    @ApiOperation("根据用户权限查询所有相同权限的用户")
+    @GetMapping("/queryUserByUserType/{userType}")
+    public Result<List<User>> queryUserByUserType(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userType){
+        if(!Constant.ADMIN_ID_SET.contains(tokenService.getTokenId(token))){
+            return Result.fail(ResultType.NO_PERMIT);
+        }
+        return Result.success(userService.queryByUserType(userType));
     }
 
 }

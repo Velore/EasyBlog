@@ -16,7 +16,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 获取用户数量
-     * @return
+     * @return int
      */
     int getCount();
 

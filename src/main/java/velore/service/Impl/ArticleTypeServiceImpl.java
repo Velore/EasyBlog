@@ -8,6 +8,7 @@ import utils.RandomUtil;
 import velore.dao.ArticleTypeMapper;
 import velore.po.ArticleType;
 import velore.service.ArticleTypeService;
+import velore.service.ext.Countable;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ import java.util.TreeSet;
  * @date 2022/3/26
  **/
 @Service
-public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, ArticleType> implements ArticleTypeService {
+public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, ArticleType>
+        implements ArticleTypeService, Countable {
 
     @Resource
     private ArticleTypeService articleTypeService;
@@ -67,10 +69,15 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
         Set<Integer> idSet = new TreeSet<>();
         List<ArticleType> articleTypeList = new ArrayList<>();
         while(idSet.size() < num){
-            idSet.add(RandomUtil.randomInt(bound));
-        }
-        for(Integer i : idSet){
-            articleTypeList.add(articleTypeService.queryById(i));
+            int randomId = RandomUtil.randomInt(bound);
+            if(idSet.add(randomId)){
+                ArticleType articleType = articleTypeService.queryById(randomId);
+                if(articleType!=null) {
+                    articleTypeList.add(articleType);
+                    continue;
+                }
+                idSet.remove(randomId);
+            }
         }
         return articleTypeList;
     }

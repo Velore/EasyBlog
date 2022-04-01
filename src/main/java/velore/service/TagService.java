@@ -11,28 +11,32 @@ import java.util.List;
  **/
 public interface TagService extends IService<Tag> {
 
+    /**
+     * 获取标签数量
+     * @return int
+     */
     int getCount();
 
     /**
      * 新增标签
      * @param tag tag
-     * @return
+     * @return int
      */
     int add(Tag tag);
 
     /**
-     * 删除标签
-     * @param tagId tagId
-     * @return
-     */
-    int delete(Integer tagId);
-
-    /**
      * 更新标签
      * @param tag tag
-     * @return
+     * @return int
      */
     int update(Tag tag);
+
+    /**
+     * 删除标签
+     * @param tagId tagId
+     * @return int
+     */
+    int delete(Integer tagId);
 
     /**
      * 查询全部标签
@@ -43,21 +47,21 @@ public interface TagService extends IService<Tag> {
     /**
      * 通过id查询标签
      * @param id id
-     * @return
+     * @return tag
      */
     Tag queryById(Integer id);
 
     /**
      * 随机获取指定数量的tag
      * @param num num
-     * @return
+     * @return tag list
      */
     List<Tag> queryRandom(Integer num);
 
     /**
      * 通过标签名查询标签
      * @param tagName tagName
-     * @return
+     * @return tag list
      */
     List<Tag> queryLikeName(String tagName);
 }

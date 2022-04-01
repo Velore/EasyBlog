@@ -10,6 +10,7 @@ import velore.constants.ArticleConstant;
 import velore.dao.ArticleMapper;
 import velore.po.Article;
 import velore.service.ArticleService;
+import velore.service.ext.Countable;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.TreeSet;
  * @date 2022/3/26
  **/
 @Service
-public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
+public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService, Countable {
 
     @Resource
     private ArticleService articleService;
@@ -95,10 +96,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             //若id不在set中
             if(idSet.add(randomId)){
                 Article article = articleService.queryById(randomId);
-                //若文章隐藏,则不添加
-                if(article.getVisible()){
+                //若文章存在且没有设置隐藏,则添加
+                if(article!=null && article.getVisible()){
                     articleList.add(article);
+                    continue;
                 }
+                //文章没有被添加时删除本次id
+                idSet.remove(randomId);
             }
         }
         return articleList;

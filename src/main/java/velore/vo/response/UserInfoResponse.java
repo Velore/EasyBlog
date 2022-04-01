@@ -3,6 +3,8 @@ package velore.vo.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import result.ResultType;
+import velore.exception.InvalidParamException;
 import velore.po.User;
 
 import java.time.LocalDateTime;
@@ -37,6 +39,9 @@ public class UserInfoResponse {
     private LocalDateTime updateTime;
 
     public UserInfoResponse(User user){
+        if(user == null){
+            throw new InvalidParamException(ResultType.USER_NOT_EXISTS.getMsg());
+        }
         id = user.getId();
         userRegId = user.getUserRegId();
         username = user.getUsername();

@@ -12,6 +12,10 @@ import java.util.List;
  **/
 public interface ArticleService extends IService<Article> {
 
+    /**
+     * 获取文章总数
+     * @return int
+     */
     int getCount();
 
     /**

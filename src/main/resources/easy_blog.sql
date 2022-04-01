@@ -58,7 +58,7 @@ create table if not exists tag(
     id int not null primary key auto_increment,
     name varchar(16) not null comment '标签名',
     description varchar(100) null default null comment '标签描述',
-    blog_num int not null comment '使用该标签的文章数量'
+    article_num int not null comment '使用该标签的文章数量'
 )comment '标签';
 
 drop table if exists comment;
@@ -88,7 +88,7 @@ insert into article_type(name, level, description) values
 ('技术类', 1, '技术类文章的标签')
 ,('杂谈类', 1, '杂谈类文章的标签');
 
-insert into tag(name, description, blog_num) values
+insert into tag(name, description, article_num) values
 ('前端', '前端标签', 0),('Java', 'Java标签', 0),('mysql', 'mysql标签', 0);
 
 insert into article(user_id, title, content, views, like_num, status, publish_time, create_time, update_time) values

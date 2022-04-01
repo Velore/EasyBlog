@@ -12,6 +12,7 @@ import velore.po.UserType;
 import velore.security.TokenService;
 import velore.service.UserService;
 import utils.Md5Util;
+import velore.service.ext.Countable;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
 
@@ -23,7 +24,7 @@ import java.util.List;
  * @date 2022/3/2
  **/
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService , Countable {
 
     @Resource
     private UserService userService;
@@ -71,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         int tokenId = tokenService.getTokenId(token);
         User user;
         //token不为空，且不是管理员
-        if(token != null ||( tokenId != 1 && tokenId != 2)){
+        if(token != null && tokenId != 1 && tokenId != 2){
             user = userService.queryById(tokenId);
         }else {
             user = userService.queryById(updateRequest.getId());

@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import velore.bo.CommentQueryBo;
 import velore.dao.CommentMapper;
+import velore.exception.IllegalRequestException;
 import velore.po.Comment;
+import velore.service.ArticleService;
 import velore.service.CommentService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -16,11 +19,17 @@ import java.util.List;
  * @date 2022/4/1
  **/
 @Service
-public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
+public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService{
+
+    @Resource
+    ArticleService articleService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int add(Comment comment) {
+        if(!articleService.queryById(comment.getArticleId()).getCommentable()){
+            throw new IllegalRequestException("当前文章不允许评论");
+        }
         return baseMapper.insert(comment);
     }
 

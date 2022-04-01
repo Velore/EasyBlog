@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
 import velore.dao.TagMapper;
 import velore.po.Tag;
+import velore.service.ext.Countable;
 import velore.service.TagService;
 
 import javax.annotation.Resource;
@@ -17,7 +18,7 @@ import java.util.*;
  * @date 2022/3/17
  **/
 @Service
-public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
+public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService, Countable{
 
     @Resource
     private TagService tagService;
@@ -35,14 +36,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(Integer tagId) {
-        return baseMapper.deleteById(tagId);
+    public int update(Tag tag) {
+        return baseMapper.updateById(tag);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int update(Tag tag) {
-        return baseMapper.updateById(tag);
+    public int delete(Integer tagId) {
+        return baseMapper.deleteById(tagId);
     }
 
     @Override
@@ -64,10 +65,15 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         Set<Integer> idSet = new TreeSet<>();
         List<Tag> tagList = new ArrayList<>();
         while(idSet.size() < num){
-            idSet.add(RandomUtil.randomInt(bound));
-        }
-        for(Integer i : idSet){
-            tagList.add(tagService.queryById(i));
+            int randomId = RandomUtil.randomInt(bound);
+            if(idSet.add(randomId)){
+                Tag tag = tagService.queryById(randomId);
+                if(tag !=null ){
+                    tagList.add(tag);
+                    continue;
+                }
+                idSet.remove(randomId);
+            }
         }
         return tagList;
     }
