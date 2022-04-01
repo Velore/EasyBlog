@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @TableName("article")
 @ApiModel("文章")
 @Alias("Article")
-public class Article {
+public class Article implements Comparable<Article>{
 
     /**
      * blog id
@@ -33,7 +33,7 @@ public class Article {
     /**
      * 类型
      */
-    private Integer blogTypeId;
+    private Integer articleType;
     /**
      * 发布者
      */
@@ -48,10 +48,12 @@ public class Article {
     private String content;
     /**
      * 浏览量
+     * 用于排序
      */
     private Integer views;
     /**
      * 点赞数
+     * 用于排序
      */
     private Integer likeNum;
     /**
@@ -64,6 +66,7 @@ public class Article {
     private Boolean commentable;
     /**
      * 是否被推荐
+     * 用于排序
      */
     private Boolean recommend;
     /**
@@ -73,6 +76,7 @@ public class Article {
 
     /**
      * 发布时间
+     * 用于排序
      */
     private LocalDateTime publishTime;
 
@@ -80,5 +84,16 @@ public class Article {
 
     private LocalDateTime updateTime;
 
-
+    @Override
+    public int compareTo(Article o) {
+        // views排序权值2
+        // likeNum排序权值3
+        int[] baseRank = {2, 3};
+        int recommendRank = 2;
+        int[] rank1 = (this.recommend)?
+                new int[]{baseRank[0]*recommendRank, baseRank[1]*recommendRank} :baseRank;
+        int[] rank2 = (o.recommend)?
+                new int[]{baseRank[0]*recommendRank, baseRank[1]*recommendRank} :baseRank;
+        return (this.views*rank1[0] + this.likeNum*rank1[1] - o.views*rank2[0] - o.likeNum*rank2[1])%2;
+    }
 }

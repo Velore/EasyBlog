@@ -47,11 +47,13 @@ public class User {
     private UserType userType;
 
     /**
+     * 最后登录时间
+     */
+    private LocalDateTime lastLoginTime;
+    /**
      * 注册时间
      */
     private LocalDateTime createTime;
-    /**
-     * 最后登录时间
-     */
+
     private LocalDateTime updateTime;
 }

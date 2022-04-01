@@ -21,25 +21,13 @@ public class ArticleQueryBo {
 
     private String title;
 
-    private Integer views;
-
-    private Integer likeNum;
-
-    private Boolean visible;
-
-    private Boolean commentable;
-
-    private Boolean recommend;
-
-    private Integer status;
-
     /**
-     * 发布时间之前
+     * 最早的发布时间
      */
     private LocalDateTime publishAfter;
 
     /**
-     * 发布时间之后
+     * 最晚的发布时间
      */
     private LocalDateTime publishBefore;
 }

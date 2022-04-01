@@ -65,7 +65,7 @@ public class UserController {
     @ApiOperation("根据请求头中的token返回用户信息")
     @GetMapping("/getUserInfo")
     public Result<UserInfoResponse> getUserInfo(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
-        User user = userService.queryUserById(tokenService.getTokenId(token));
+        User user = userService.queryById(tokenService.getTokenId(token));
         if(user == null){
             return Result.fail(ResultType.USER_NOT_EXISTS);
         }
@@ -77,7 +77,7 @@ public class UserController {
     public Result<UserInfoResponse> updateUser(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token,
             @RequestBody UserUpdateRequest updateRequest){
-        return userService.updateUser(token, updateRequest) == 1 ?
+        return userService.update(token, updateRequest) == 1 ?
                 Result.success() : Result.fail(ResultType.SYSTEM_ERROR) ;
     }
 

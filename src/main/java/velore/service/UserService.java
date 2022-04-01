@@ -42,7 +42,7 @@ public interface UserService extends IService<User> {
      * @param updateRequest 更新信息的用户
      * @return 是否更新成功
      */
-    int updateUser(String token, UserUpdateRequest updateRequest);
+    int update(String token, UserUpdateRequest updateRequest);
 
     /**
      * 封禁用户
@@ -69,21 +69,21 @@ public interface UserService extends IService<User> {
      * @param id id
      * @return 是否删除成功
      */
-    int deleteUser(int id);
+    int delete(int id);
 
     /**
      * 通过id获取用户
      * @param id id
      * @return user
      */
-    User queryUserById(int id);
+    User queryById(int id);
 
     /**
      * 通过QueryBo查询用户
      * @param queryBo queryBo
      * @return user
      */
-    User queryUserByUserQueryBo(UserQueryBo queryBo);
+    User queryByQueryBo(UserQueryBo queryBo);
 
     /**
      * 通过名字模糊查询用户
@@ -91,7 +91,7 @@ public interface UserService extends IService<User> {
      * @param name name
      * @return user list
      */
-    List<User> queryUserLikeName(String name);
+    List<User> queryLikeName(String name);
 
     /**
      * 根据用户权限查询所有相同权限的用户
@@ -99,6 +99,6 @@ public interface UserService extends IService<User> {
      * @param type type
      * @return user list
      */
-    List<User> queryUserByUserType(int type);
+    List<User> queryByUserType(int type);
 
 }

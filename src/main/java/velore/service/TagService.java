@@ -18,46 +18,46 @@ public interface TagService extends IService<Tag> {
      * @param tag tag
      * @return
      */
-    int addTag(Tag tag);
+    int add(Tag tag);
 
     /**
      * 删除标签
      * @param tagId tagId
      * @return
      */
-    int deleteTag(Integer tagId);
+    int delete(Integer tagId);
 
     /**
      * 更新标签
      * @param tag tag
      * @return
      */
-    int updateTag(Tag tag);
+    int update(Tag tag);
 
     /**
      * 查询全部标签
      * @return tag list
      */
-    List<Tag> queryAllTag();
+    List<Tag> queryAll();
 
     /**
      * 通过id查询标签
      * @param id id
      * @return
      */
-    Tag queryTagById(Integer id);
+    Tag queryById(Integer id);
 
     /**
      * 随机获取指定数量的tag
      * @param num num
      * @return
      */
-    List<Tag> queryRandomTag(Integer num);
+    List<Tag> queryRandom(Integer num);
 
     /**
      * 通过标签名查询标签
      * @param tagName tagName
      * @return
      */
-    List<Tag> queryTagsLikeName(String tagName);
+    List<Tag> queryLikeName(String tagName);
 }

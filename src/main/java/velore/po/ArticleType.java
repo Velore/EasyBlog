@@ -56,6 +56,6 @@ public class ArticleType implements Comparable<ArticleType>{
     public int compareTo(ArticleType type) {
         int mainComparator = this.level - type.level;
         //先根据 level 排序, 再根据 articleNum 排序
-        return (mainComparator == 0)?(this.articleNum - type.articleNum):mainComparator;
+        return (mainComparator == 0)?(this.articleNum - type.articleNum)%2:mainComparator%2;
     }
 }

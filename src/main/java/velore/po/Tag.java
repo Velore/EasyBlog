@@ -46,6 +46,6 @@ public class Tag implements Comparable<Tag>{
 
     @Override
     public int compareTo(Tag tag) {
-        return articleNum - tag.articleNum;
+        return (articleNum - tag.articleNum)%2;
     }
 }

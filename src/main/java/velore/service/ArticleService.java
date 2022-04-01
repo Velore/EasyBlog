@@ -19,14 +19,14 @@ public interface ArticleService extends IService<Article> {
      * @param article article
      * @return int
      */
-    int addArticle(Article article);
+    int add(Article article);
 
     /**
      * 更新article
      * @param article article
      * @return int
      */
-    int updateArticle(Article article);
+    int update(Article article);
 
     /**
      * 保存为草稿
@@ -47,26 +47,26 @@ public interface ArticleService extends IService<Article> {
      * @param id articleId
      * @return int
      */
-    int deleteArticle(Integer id);
+    int delete(Integer id);
 
     /**
      * 通过id查询
      * @param id articleId
      * @return Article
      */
-    Article queryArticleById(Integer id);
+    Article queryById(Integer id);
 
     /**
      * 随机查询指定数量
      * @param num num
      * @return list
      */
-    List<Article> queryRandomArticle(Integer num);
+    List<Article> queryRandom(Integer num);
 
     /**
      * 条件查询
      * @param queryBo queryBo
      * @return list
      */
-    List<Article> queryArticleByArticleQueryBo(ArticleQueryBo queryBo);
+    List<Article> queryByQueryBo(ArticleQueryBo queryBo);
 }

@@ -18,46 +18,46 @@ public interface ArticleTypeService extends IService<ArticleType> {
      * @param type type
      * @return int
      */
-    int addArticleType(ArticleType type);
+    int add(ArticleType type);
 
     /**
      * 更新
      * @param type type
      * @return int
      */
-    int updateArticleType(ArticleType type);
+    int update(ArticleType type);
 
     /**
      * 删除
      * @param id id
      * @return int
      */
-    int deleteArticleType(int id);
+    int delete(int id);
 
     /**
      * 通过id查询
      * @param id id
      * @return
      */
-    ArticleType queryArticleTypeById(int id);
+    ArticleType queryById(int id);
 
     /**
      * 查询全部
      * @return
      */
-    List<ArticleType> queryAllArticleType();
+    List<ArticleType> queryAll();
 
     /**
      * 随机获取指定数量
      * @param num num
      * @return
      */
-    List<ArticleType> queryRandomArticleType(int num);
+    List<ArticleType> queryRandom(int num);
 
     /**
      * 通过名字模糊查询
      * @param name name
      * @return
      */
-    List<ArticleType> queryArticleTypeLikeName(String name);
+    List<ArticleType> queryLikeName(String name);
 }

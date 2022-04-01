@@ -4,11 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import utils.RandomUtil;
 import velore.dao.ArticleTypeMapper;
 import velore.po.ArticleType;
 import velore.service.ArticleTypeService;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Velore
@@ -17,6 +22,9 @@ import java.util.List;
 @Service
 public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, ArticleType> implements ArticleTypeService {
 
+    @Resource
+    private ArticleTypeService articleTypeService;
+
     @Override
     public int getCount() {
         return baseMapper.getCount();
@@ -24,39 +32,53 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int addArticleType(ArticleType type) {
+    public int add(ArticleType type) {
         return baseMapper.insert(type);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateArticleType(ArticleType type) {
+    public int update(ArticleType type) {
         return baseMapper.updateById(type);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteArticleType(int id) {
+    public int delete(int id) {
         return baseMapper.deleteById(id);
     }
 
     @Override
-    public ArticleType queryArticleTypeById(int id) {
+    public ArticleType queryById(int id) {
         return baseMapper.selectById(id);
     }
 
     @Override
-    public List<ArticleType> queryAllArticleType() {
+    public List<ArticleType> queryAll() {
         return baseMapper.selectList(new QueryWrapper<>());
     }
 
     @Override
-    public List<ArticleType> queryRandomArticleType(int num) {
-        return null;
+    public List<ArticleType> queryRandom(int num) {
+        int bound = articleTypeService.getCount();
+        if(bound < num){
+            num = bound;
+        }
+        Set<Integer> idSet = new TreeSet<>();
+        List<ArticleType> articleTypeList = new ArrayList<>();
+        while(idSet.size() < num){
+            idSet.add(RandomUtil.randomInt(bound));
+        }
+        for(Integer i : idSet){
+            articleTypeList.add(articleTypeService.queryById(i));
+        }
+        return articleTypeList;
     }
 
     @Override
-    public List<ArticleType> queryArticleTypeLikeName(String name) {
-        return null;
+    public List<ArticleType> queryLikeName(String name) {
+        QueryWrapper<ArticleType> wrapper = new QueryWrapper<>();
+        wrapper.like("name", name);
+        return baseMapper.selectList(wrapper);
     }
 }
