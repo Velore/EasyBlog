@@ -4,26 +4,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import velore.po.User;
 import velore.po.UserType;
-import velore.security.TokenService;
-
-import javax.annotation.Resource;
 
 /**
  * @author Velore
  * @date 2022/3/3
  **/
 @SpringBootTest
-public class TokenServiceTest {
-
-    @Resource
-    TokenService tokenService;
+public class TokenUtilTest {
 
     @Test
     public void generateTest(){
         User user = new User();
         user.setId(2);
-        user.setUserType(UserType.ADMIN);
-        String token = tokenService.generate(user);
+        user.setUserType(UserType.ADMIN.getValue());
+        String token = TokenUtil.generate(user);
         System.out.println(token);
     }
 
@@ -31,11 +25,11 @@ public class TokenServiceTest {
     public void generateAndVerifyTest() {
         User user = new User();
         user.setId(2);
-        user.setUserType(UserType.ADMIN);
-        String token = tokenService.generate(user);
+        user.setUserType(UserType.ADMIN.getValue());
+        String token = TokenUtil.generate(user);
         System.out.println(token);
         try {
-            tokenService.verify(token);
+            TokenUtil.verify(token);
             System.out.println("token verify success");
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,23 +40,23 @@ public class TokenServiceTest {
     public void getTokenIdTest() {
         User user = new User();
         user.setId(2);
-        user.setUserType(UserType.ADMIN);
-        String token = tokenService.generate(user);
-        System.out.println(tokenService.getTokenId(token));
+        user.setUserType(UserType.ADMIN.getValue());
+        String token = TokenUtil.generate(user);
+        System.out.println(TokenUtil.getTokenId(token));
     }
 
     @Test
     public void refreshTest() {
         User user = new User();
         user.setId(2);
-        user.setUserType(UserType.ADMIN);
-        String token = tokenService.generate(user);
+        user.setUserType(UserType.ADMIN.getValue());
+        String token = TokenUtil.generate(user);
         System.out.println(token);
         try{
             Thread.sleep(2000);
         }catch (Exception e){
             e.printStackTrace();
         }
-        System.out.println(tokenService.refresh(token));
+        System.out.println(TokenUtil.refresh(token));
     }
 }

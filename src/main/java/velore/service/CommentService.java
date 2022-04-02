@@ -14,7 +14,7 @@ public interface CommentService extends IService<Comment> {
 
     int add(Comment comment);
 
-    int delete(Integer id);
+    int delete(String token, Integer id);
 
     Comment queryById(Integer id);
 

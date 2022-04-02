@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
+import velore.utils.TokenUtil;
+import velore.vo.request.CommentRequest;
 
 import java.time.LocalDateTime;
 
@@ -50,4 +52,10 @@ public class Comment {
      * 发送时间
      */
     private LocalDateTime createTime;
+
+    public Comment(String token, CommentRequest request){
+        articleId = request.getArticleId();
+        userId = TokenUtil.getTokenId(token);
+        content = request.getContent();
+    }
 }

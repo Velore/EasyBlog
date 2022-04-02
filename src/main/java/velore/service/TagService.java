@@ -32,6 +32,20 @@ public interface TagService extends IService<Tag> {
     int update(Tag tag);
 
     /**
+     * articleNum++
+     * @param id id
+     * @return int
+     */
+    int increase(Integer id);
+
+    /**
+     * articleNum--
+     * @param id id
+     * @return int
+     */
+    int decrease(Integer id);
+
+    /**
      * 删除标签
      * @param tagId tagId
      * @return int

@@ -1,14 +1,13 @@
 package velore.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
+import velore.vo.request.UserLoginRequest;
 
 import java.time.LocalDateTime;
 
@@ -44,7 +43,8 @@ public class User {
     private String phone;
     private String email;
     private String avatar;
-    private UserType userType;
+
+    private Integer userType;
 
     /**
      * 最后登录时间
@@ -56,4 +56,9 @@ public class User {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    public User(UserLoginRequest request){
+        userRegId = request.getIdentifier();
+        password = request.getPassword();
+    }
 }

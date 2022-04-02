@@ -50,10 +50,10 @@ public class SwaggerConfig {
     public ApiInfo apiInfo(){
         return new ApiInfo(
                 "EasyBlog API",
-                "StrayAnimalsManagementSystem",
+                "easy blog",
                 "v1.0",
                 "https://github.com/Velore",
-                new Contact("HexTechGDUT", "https://github.com", ""),
+                new Contact("velore", "https://github.com/Velore", ""),
                 "Apache 2.0",
                 "https://www.apache.org/licenses/LICENSE-2.0",
                 new ArrayList<>()

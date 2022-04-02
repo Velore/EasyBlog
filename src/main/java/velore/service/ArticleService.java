@@ -19,39 +19,27 @@ public interface ArticleService extends IService<Article> {
     int getCount();
 
     /**
-     * 新增Article
+     * 该方法作为(draft,publish底层方法)不暴露接口
+     * add Article
      * @param article article
-     * @return int
+     * @return boolean
      */
-    int add(Article article);
+    boolean add(Article article);
 
     /**
      * 更新article
      * @param article article
-     * @return int
+     * @return boolean
      */
-    int update(Article article);
-
-    /**
-     * 保存为草稿
-     * @param id articleId
-     * @return int
-     */
-    int save(Integer id);
-
-    /**
-     * 发布article
-     * @param id articleId
-     * @return int
-     */
-    int publish(Integer id);
+    boolean update(Article article);
 
     /**
      * 设置文章状态为已删除
+     * @param token token
      * @param id articleId
-     * @return int
+     * @return boolean
      */
-    int delete(Integer id);
+    boolean delete(String token, Integer id);
 
     /**
      * 通过id查询

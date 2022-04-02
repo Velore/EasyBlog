@@ -11,17 +11,40 @@ import java.util.List;
  **/
 public interface ArticleTagService extends IService<ArticleTag> {
 
-    int getCount();
+    /**
+     * 添加文章标签对应关系
+     * @param token token
+     * @param articleTag articleTag
+     * @return int
+     */
+    int add(String token, ArticleTag articleTag);
 
-    int add(ArticleTag articleTag);
+    /**
+     * 删除文章标签对应关系
+     * @param token token
+     * @param id id
+     * @return int
+     */
+    int delete(String token, Integer id);
 
-    int delete(Integer id);
-
+    /**
+     * 根据id查询
+     * @param id id
+     * @return ArticleTag
+     */
     ArticleTag queryById(Integer id);
 
-    ArticleTag queryByArticleIdAndTagId(Integer articleId, Integer tagId);
+    /**
+     * 根据文章id查询文章携带的标签
+     * @param articleId articleId
+     * @return ArticleTag list
+     */
+    List<ArticleTag> queryByArticleId(Integer articleId);
 
-    List<ArticleTag> queryByArticleId(Integer id);
-
-    List<ArticleTag> queryByTagId(Integer id);
+    /**
+     * 根据标签id查询携带该标签的文章
+     * @param tagId tagId
+     * @return ArticleTag list
+     */
+    List<ArticleTag> queryByTagId(Integer tagId);
 }

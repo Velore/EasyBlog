@@ -14,7 +14,7 @@ create table if not exists `user`(
     phone varchar(11) null default null comment '电话号',
     email varchar(255) null default null comment '邮箱',
     avatar varchar(255) null default null comment '头像url',
-    user_type int not null default 1 comment '用户类型',
+    user_type int not null default 2 comment '用户类型',
     last_login_time datetime not null default now() comment '最后登录时间',
     create_time datetime not null comment '注册时间',
     update_time datetime not null comment '更新时间'
@@ -80,23 +80,36 @@ create table if not exists article_tag(
 )comment '文章的标签';
 
 insert into user(user_reg_id, username, password, user_type, last_login_time, create_time, update_time)values
-('admin1', 'admin1', 'admin1', 0, now(), '2022-3-1 11:11:11', now())
-,('admin2', 'admin2', 'admin2', 0, now(), '2022-3-1 12:12:12', now())
-,('user1', 'user1', '123', 1, now(), '2022-3-2 11:11:11', now());
+('admin1', 'admin1', 'admin1', 1, now(), '2022-3-1 11:11:11', now())
+,('admin2', 'admin2', 'admin2', 1, now(), '2022-3-1 12:12:12', now())
+,('user1', 'user1', '123', 2, now(), '2022-3-2 11:11:11', now())
+,('user2', 'user2', '123', 2, now(), '2022-3-5 11:12:12', now())
+,('user3', 'user3', '123', 2, now(), '2022-3-7 7:11:11', now());
 
 insert into article_type(name, level, description) values
-('技术类', 1, '技术类文章的标签')
-,('杂谈类', 1, '杂谈类文章的标签');
+('技术类', 1, '技术类文章的类型')
+,('杂谈类', 1, '杂谈类文章的类型');
 
 insert into tag(name, description, article_num) values
-('前端', '前端标签', 0),('Java', 'Java标签', 0),('mysql', 'mysql标签', 0);
+('前端', '前端标签', 1)
+,('Java', 'Java标签', 1)
+,('mysql', 'mysql标签', 0);
 
 insert into article(user_id, title, content, views, like_num, status, publish_time, create_time, update_time) values
-(3, '文章1', 'aaa', 0, 0, 1, '2022-3-2 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11')
-,(3, '文章2', '111', 0, 0, 1, '2022-3-2 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11');
+(3, 'Spring', 'aaa', 7, 4, 2, '2022-3-3 11:11:11', '2021-1-2 11:11:11', '2022-3-3 11:11:11')
+,(3, 'MySql', '111', 9, 6, 2, '2022-3-3 11:11:11', '2022-3-1 11:11:11', '2022-3-3 11:11:11')
+,(4, 'Java基础', '111', 30, 15, 2, '2022-3-8 11:11:11', '2022-3-7 11:11:11', '2022-3-8 11:11:11')
+,(5, 'Java面试', '111', 25, 17, 2, '2022-3-9 11:11:11', '2022-3-7 11:11:11', '2022-3-9 11:11:11')
+,(4, 'HTML', '111', 0, 0, 1, '2022-3-10 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11')
+,(5, 'CSS', '111', 12, 3, 2, '2022-3-15 11:11:11', '2022-3-12 11:11:11', '2022-3-15 11:11:11');
+
 
 insert into comment(article_id, user_id, content) values
-(1, 1, '好文章'),(2, 2, '第二篇好文章');
+(1, 1, '好文章')
+,(2, 3, '第二篇好文章')
+,(3, 3, '233333')
+,(3, 4, '666')
+,(4, 4, '好文章666');
 
 insert into article_tag(article_id, tag_id) values
-(1, 1), (1, 2);
+(1, 1),(1, 2),(5, 1),(6, 1);

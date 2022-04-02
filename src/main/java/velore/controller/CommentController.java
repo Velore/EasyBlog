@@ -5,8 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.bo.CommentQueryBo;
+import velore.constants.Constant;
 import velore.po.Comment;
 import velore.service.CommentService;
+import velore.vo.request.CommentRequest;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,15 +28,19 @@ public class CommentController {
 
     @ApiOperation("发布评论")
     @PostMapping("/publish")
-    public Result<String> publish(@RequestBody Comment comment){
-        commentService.add(comment);
+    public Result<String> publish(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY)String token,
+            @RequestBody CommentRequest request){
+        commentService.add(new Comment(token, request));
         return Result.success();
     }
 
     @ApiOperation("删除评论")
     @DeleteMapping("/deleteComment/{id}")
-    public Result<String> deleteComment(@PathVariable Integer id){
-        commentService.delete(id);
+    public Result<String> deleteComment(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY)String token,
+            @PathVariable Integer id){
+        commentService.delete(token, id);
         return Result.success();
     }
 

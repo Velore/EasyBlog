@@ -41,6 +41,20 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     }
 
     @Override
+    public int increase(Integer id) {
+        Tag tag = tagService.queryById(id);
+        tag.setArticleNum(tag.getArticleNum()+1);
+        return tagService.update(tag);
+    }
+
+    @Override
+    public int decrease(Integer id) {
+        Tag tag = tagService.queryById(id);
+        tag.setArticleNum(tag.getArticleNum()-1);
+        return tagService.update(tag);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int delete(Integer tagId) {
         return baseMapper.deleteById(tagId);

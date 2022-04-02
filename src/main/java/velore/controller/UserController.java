@@ -7,7 +7,7 @@ import result.Result;
 import result.ResultType;
 import velore.constants.Constant;
 import velore.po.User;
-import velore.security.TokenService;
+import velore.utils.TokenUtil;
 import velore.service.UserService;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
@@ -28,9 +28,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private TokenService tokenService;
 
     @ApiOperation("hello")
     @GetMapping("/hello")
@@ -54,7 +51,7 @@ public class UserController {
     @ApiOperation("刷新token")
     @GetMapping("/refresh")
     public Result<String> refresh(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
-        return Result.success(tokenService.refresh(token));
+        return Result.success(TokenUtil.refresh(token));
     }
 
     /**
@@ -65,7 +62,7 @@ public class UserController {
     @ApiOperation("根据请求头中的token返回用户信息")
     @GetMapping("/getUserInfo")
     public Result<UserInfoResponse> getUserInfo(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
-        User user = userService.queryById(tokenService.getTokenId(token));
+        User user = userService.queryById(TokenUtil.getTokenId(token));
         return Result.success(new UserInfoResponse(user));
     }
 
@@ -80,15 +77,17 @@ public class UserController {
 
     @ApiOperation("封禁用户")
     @GetMapping("/ban/{userId}")
-    public Result<String> ban(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String userId){
-        userService.ban(token, Integer.parseInt(userId));
+    public Result<String> ban(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userId){
+        userService.ban(token, userId);
         return Result.success();
     }
 
     @ApiOperation("解封用户")
     @GetMapping("/permit/{userId}")
-    public Result<String> permit(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String userId){
-        userService.permit(token, Integer.parseInt(userId));
+    public Result<String> permit(
+            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userId){
+        userService.permit(token, userId);
         return Result.success();
     }
 
@@ -96,7 +95,7 @@ public class UserController {
     @GetMapping("/queryUserLikeName/{name}")
     public Result<List<User>> queryUserLikeName(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String name){
-        if(!Constant.ADMIN_ID_SET.contains(tokenService.getTokenId(token))){
+        if(!Constant.ADMIN_ID_SET.contains(TokenUtil.getTokenId(token))){
             return Result.fail(ResultType.NO_PERMIT);
         }
         return Result.success(userService.queryLikeName(name));
@@ -106,7 +105,7 @@ public class UserController {
     @GetMapping("/queryUserByUserType/{userType}")
     public Result<List<User>> queryUserByUserType(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userType){
-        if(!Constant.ADMIN_ID_SET.contains(tokenService.getTokenId(token))){
+        if(!Constant.ADMIN_ID_SET.contains(TokenUtil.getTokenId(token))){
             return Result.fail(ResultType.NO_PERMIT);
         }
         return Result.success(userService.queryByUserType(userType));

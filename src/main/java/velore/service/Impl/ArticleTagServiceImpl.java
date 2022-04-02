@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import velore.dao.ArticleTagMapper;
 import velore.po.ArticleTag;
 import velore.service.ArticleTagService;
-import velore.service.ext.Countable;
+import velore.service.TagService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,35 +18,31 @@ import java.util.List;
  **/
 @Service
 public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, ArticleTag>
-        implements ArticleTagService, Countable {
+        implements ArticleTagService{
 
-    @Override
-    public int getCount() {
-        return baseMapper.getCount();
-    }
+    @Resource
+    ArticleTagService articleTagService;
+
+    @Resource
+    TagService tagService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int add(ArticleTag articleTag) {
+    public int add(String token, ArticleTag articleTag) {
+        tagService.increase(articleTag.getTagId());
         return baseMapper.insert(articleTag);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(Integer id) {
+    public int delete(String token, Integer id) {
+        tagService.decrease(articleTagService.queryById(id).getTagId());
         return baseMapper.deleteById(id);
     }
 
     @Override
     public ArticleTag queryById(Integer id) {
-        return baseMapper.selectById(id);
-    }
-
-    @Override
-    public ArticleTag queryByArticleIdAndTagId(Integer articleId, Integer tagId) {
-        QueryWrapper<ArticleTag> wrapper = new QueryWrapper<>();
-        wrapper.eq("article_id", articleId).eq("tag_id", tagId);
-        return baseMapper.selectOne(wrapper);
+        return articleTagService.getById(id);
     }
 
     @Override

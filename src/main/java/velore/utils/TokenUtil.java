@@ -1,4 +1,4 @@
-package velore.security;
+package velore.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import org.springframework.stereotype.Service;
 import velore.po.User;
 
 import java.util.Calendar;
@@ -16,28 +15,31 @@ import java.util.Map;
 
 /**
  * @author Velore
- * @date 2022/3/2
+ * @date 2022/4/2
  **/
-@Service
-public class JwtTokenServiceImpl implements TokenService{
+public class TokenUtil {
 
     /**
      * 单位：天
      */
-    public static final int CALENDAR_FIELD = Calendar.DATE;
+    private static final int CALENDAR_FIELD = Calendar.DATE;
 
     /**
      * token 过期时间: 7天
      */
-    public static final int CALENDAR_INTERVAL = 7;
+    private static final int CALENDAR_INTERVAL = 7;
 
     /**
      * token密钥
      */
-    public static final String SECRET = "token secret service";
+    private static final String SECRET = "token secret service";
 
-    @Override
-    public String generate(User user){
+    /**
+     * 生成token
+     * @param user user
+     * @return String token
+     */
+    public static String generate(User user){
         // 获取过期时间
         Calendar nowTime = Calendar.getInstance();
         nowTime.add(CALENDAR_FIELD, CALENDAR_INTERVAL);
@@ -62,8 +64,12 @@ public class JwtTokenServiceImpl implements TokenService{
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
-    @Override
-    public String refresh(String token) {
+    /**
+     * 刷新token的过期时间
+     * @param token old token
+     * @return new token
+     */
+    public static String refresh(String token) {
         DecodedJWT jwt = JWT.decode(token);
         User user = new User();
         user.setId(Integer.parseInt(jwt.getAudience().get(0)));
@@ -71,8 +77,13 @@ public class JwtTokenServiceImpl implements TokenService{
         return generate(user);
     }
 
-    @Override
-    public void verify(String token) {
+    /**
+     * 验证Token
+     * 验证成功什么也不做
+     * 验证失败抛出异常
+     * @param token token
+     */
+    public static void verify(String token) {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET)).build();
             verifier.verify(token);
@@ -81,13 +92,19 @@ public class JwtTokenServiceImpl implements TokenService{
         }
     }
 
-    @Override
-    public String getTokenId(String token){
+    /**
+     * 不验证token,直接获取token中的id
+     * 数据库id而非userId
+     * 通常用于验证完token后验证用户是否存在
+     * @param token token
+     * @return uid
+     */
+    public static int getTokenId(String token){
         if(StringUtils.isEmpty(token)) {
-            return "";
+            return -1;
         }
         DecodedJWT jwt = JWT.decode(token);
-        return jwt.getAudience().get(0);
+        return Integer.parseInt(jwt.getAudience().get(0));
     }
 
     /**

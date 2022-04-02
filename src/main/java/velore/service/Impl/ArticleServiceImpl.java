@@ -8,25 +8,134 @@ import utils.RandomUtil;
 import velore.bo.ArticleQueryBo;
 import velore.constants.ArticleConstant;
 import velore.dao.ArticleMapper;
+import velore.exception.IllegalRequestException;
+import velore.exception.InvalidParamException;
 import velore.po.Article;
 import velore.service.ArticleService;
+import velore.service.ext.ArticleOps;
 import velore.service.ext.Countable;
+import velore.utils.TokenUtil;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * @author Velore
  * @date 2022/3/26
  **/
 @Service
-public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService, Countable {
+public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
+        implements ArticleService, Countable, ArticleOps{
 
     @Resource
     private ArticleService articleService;
+
+    @Override
+    public boolean draft(Article article) {
+        article.setStatus(ArticleConstant.ARTICLE_STATUS_DRAFT);
+        //文章不存在
+        if(articleService.queryById(article.getId())==null){
+            return articleService.add(article);
+        }
+        //文章存在
+        if(!ArticleConstant.ARTICLE_STATUS_DRAFT.equals(article.getStatus())){
+            return articleService.update(article);
+        }
+        //文章存在且不需要更新
+        return true;
+    }
+
+    @Override
+    public boolean publish(Article article) {
+        article.setStatus(ArticleConstant.ARTICLE_STATUS_PUBLISHED);
+        article.setPublishTime(LocalDateTime.now());
+        //文章不存在
+        if(articleService.queryById(article.getId())==null){
+            return articleService.add(article);
+        }
+        //文章存在
+        if(!ArticleConstant.ARTICLE_STATUS_PUBLISHED.equals(article.getStatus())){
+            return articleService.update(article);
+        }
+        //文章存在且不需要更新
+        return true;
+    }
+
+    public boolean viewAll(Map<Integer, Integer> viewList){
+        if(viewList == null || viewList.isEmpty()){
+            throw new InvalidParamException("viewList为空");
+        }
+        Article article;
+        List<Article> list = new LinkedList<>();
+        for(Map.Entry<Integer, Integer> entry: viewList.entrySet()){
+            article = articleService.queryById(entry.getKey());
+            if(article != null){
+                article.setViews(article.getViews()+entry.getValue());
+                list.add(article);
+            }
+        }
+        return articleService.updateBatchById(list);
+    }
+
+    @Override
+    public boolean view(Integer articleId, Integer num) {
+        Article article = articleService.queryById(articleId);
+        article.setViews(article.getViews()+num);
+        return articleService.update(article);
+    }
+
+    /**
+     * 该方法用于不使用缓存的情况
+     * @param articleId articleId
+     * @return int
+     */
+    @Override
+    public boolean view(Integer articleId){
+        ArticleServiceImpl service = (ArticleServiceImpl) articleService;
+        return service.view(articleId, 1);
+    }
+
+    public boolean likeAll(Map<Integer, Integer> likeList){
+        if(likeList == null || likeList.isEmpty()){
+            throw new InvalidParamException("likeList为空");
+        }
+        Article article;
+        List<Article> list = new LinkedList<>();
+        for(Map.Entry<Integer, Integer> entry: likeList.entrySet()){
+            article = articleService.queryById(entry.getKey());
+            if(article != null){
+                article.setLikeNum(article.getLikeNum()+entry.getValue());
+                list.add(article);
+            }
+        }
+        return articleService.updateBatchById(list);
+    }
+
+    @Override
+    public boolean like(Integer articleId, Integer num) {
+        Article article = articleService.queryById(articleId);
+        article.setLikeNum(article.getLikeNum()+num);
+        return articleService.update(article);
+    }
+
+    /**
+     * 该方法用于不使用缓存的情况
+     * @param articleId articleId
+     * @return int
+     */
+    @Override
+    public boolean like(Integer articleId){
+        ArticleServiceImpl service = (ArticleServiceImpl) articleService;
+        return service.like(articleId, 1);
+    }
+
+    @Override
+    public boolean recommend(String token, Integer articleId) {
+        Article article = articleService.queryById(articleId);
+        article.setRecommend(true);
+        return articleService.update(article);
+    }
 
     @Override
     public int getCount() {
@@ -35,47 +144,31 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int add(Article article) {
-        return baseMapper.insert(article);
+    public boolean add(Article article) {
+        return baseMapper.insert(article) == 1;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int update(Article article) {
-        return baseMapper.updateById(article);
+    public boolean update(Article article) {
+        return articleService.updateById(article);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int save(Integer articleId) {
-        Article article = baseMapper.selectById(articleId);
-        if(ArticleConstant.ARTICLE_STATUS_DRAFT.equals(article.getStatus())){
-            return 1;
+    public boolean delete(String token, Integer articleId) {
+        Article article = articleService.queryById(articleId);
+        if(article == null){
+            throw new InvalidParamException("文章不存在");
         }
-        article.setStatus(ArticleConstant.ARTICLE_STATUS_DRAFT);
-        return baseMapper.updateById(article);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int publish(Integer articleId) {
-        Article article = baseMapper.selectById(articleId);
-        if(ArticleConstant.ARTICLE_STATUS_PUBLISHED.equals(article.getStatus())){
-            return 1;
+        if(TokenUtil.getTokenId(token)!= article.getUserId()){
+            throw new IllegalRequestException("只能删除自己的文章");
         }
-        article.setStatus(ArticleConstant.ARTICLE_STATUS_PUBLISHED);
-        return baseMapper.updateById(article);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int delete(Integer articleId) {
-        Article article = baseMapper.selectById(articleId);
         if(ArticleConstant.ARTICLE_STATUS_DELETED.equals(article.getStatus())){
-            return 1;
+            return true;
         }
         article.setStatus(ArticleConstant.ARTICLE_STATUS_DELETED);
-        return baseMapper.updateById(article);
+        return articleService.updateById(article);
     }
 
     @Override
@@ -91,8 +184,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         Set<Integer> idSet = new TreeSet<>();
         List<Article> articleList = new ArrayList<>();
-        while(idSet.size() < num){
-            int randomId = RandomUtil.randomInt(bound);
+        //loop == idSet.size()+3 表示循环已经无法获取更多,可以退出循环了
+        for(int loop = 0;idSet.size() <= num && loop < idSet.size()+3;loop++){
+            int randomId = RandomUtil.randomInt(1, bound);
             //若id不在set中
             if(idSet.add(randomId)){
                 Article article = articleService.queryById(randomId);

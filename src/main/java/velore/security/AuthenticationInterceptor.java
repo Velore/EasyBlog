@@ -7,10 +7,10 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import velore.service.UserService;
+import velore.utils.TokenUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 
 /**
  * @author Velore
@@ -22,9 +22,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     UserService userService;
 
-    @Autowired
-    TokenService tokenService;
-
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest,
                              @Nullable HttpServletResponse httpServletResponse,
@@ -35,7 +32,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if(!(object instanceof HandlerMethod)){
             return true;
         }
-        tokenService.verify(token);
+        if(token!=null){
+            TokenUtil.verify(token);
+        }
 //        HandlerMethod handlerMethod=(HandlerMethod)object;
 //        Method method=handlerMethod.getMethod();
 //        //检查是否有passToken注释，有则跳过认证
@@ -53,11 +52,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 //                    throw new RuntimeException("请登录后再使用");
 //                }
 //                //验证token
-//                tokenService.verify(token);
+//                tokenUtil.verify(token);
 //                //验证token中的登录用户id是否存在,暂时不写
 //
 //                //token的权限等级
-//                int tokenAuth = JwtTokenServiceImpl.getTokenAuth(token);
+//                int tokenAuth = JwtTokenUtil.getTokenAuth(token);
 //                //执行方法所需的权限等级
 //                int methodAuth = authToken.value();
 //                //验证token的权限是否高于执行方法的权限

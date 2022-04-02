@@ -23,12 +23,6 @@ public class TagController {
     @Resource
     TagService tagService;
 
-    @ApiOperation("获取标签数量")
-    @GetMapping("/getCount")
-    public Result<Integer> getCount(){
-        return Result.success(tagService.getCount());
-    }
-
     @ApiOperation("新增标签")
     @PostMapping("/addTag")
     public Result<String> addTag(@RequestBody Tag tag){

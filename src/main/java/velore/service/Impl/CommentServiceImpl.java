@@ -35,7 +35,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(Integer id) {
+    public int delete(String token, Integer id) {
+        //TODO 检查token是否为评论发送者
         return baseMapper.deleteById(id);
     }
 

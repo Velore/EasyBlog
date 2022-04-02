@@ -1,6 +1,7 @@
 package velore.service.ext;
 
 /**
+ * 计算数据库表的行数
  * @author Velore
  * @date 2022/4/1
  **/

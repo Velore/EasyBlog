@@ -11,6 +11,11 @@ import java.util.List;
  **/
 public interface ArticleTypeService extends IService<ArticleType> {
 
+    /**
+     * 获取数据库表的行数
+     * 用于 queryRandom(int num)
+     * @return int
+     */
     int getCount();
 
     /**
@@ -37,27 +42,27 @@ public interface ArticleTypeService extends IService<ArticleType> {
     /**
      * 通过id查询
      * @param id id
-     * @return
+     * @return ArticleType
      */
     ArticleType queryById(int id);
 
     /**
      * 查询全部
-     * @return
+     * @return ArticleType list
      */
     List<ArticleType> queryAll();
 
     /**
      * 随机获取指定数量
      * @param num num
-     * @return
+     * @return ArticleType list
      */
     List<ArticleType> queryRandom(int num);
 
     /**
      * 通过名字模糊查询
      * @param name name
-     * @return
+     * @return ArticleType list
      */
     List<ArticleType> queryLikeName(String name);
 }
