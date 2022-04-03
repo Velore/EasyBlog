@@ -21,7 +21,7 @@ import java.util.List;
 public class TagController {
 
     @Resource
-    TagService tagService;
+    private TagService tagService;
 
     @ApiOperation("新增标签")
     @PostMapping("/addTag")

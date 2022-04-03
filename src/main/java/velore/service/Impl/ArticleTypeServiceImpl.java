@@ -22,7 +22,7 @@ import java.util.TreeSet;
  **/
 @Service
 public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, ArticleType>
-        implements ArticleTypeService, Countable {
+        implements ArticleTypeService{
 
     @Resource
     private ArticleTypeService articleTypeService;

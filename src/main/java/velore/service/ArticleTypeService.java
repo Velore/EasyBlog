@@ -2,6 +2,7 @@ package velore.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.po.ArticleType;
+import velore.service.ext.Countable;
 
 import java.util.List;
 
@@ -9,14 +10,7 @@ import java.util.List;
  * @author Velore
  * @date 2022/3/26
  **/
-public interface ArticleTypeService extends IService<ArticleType> {
-
-    /**
-     * 获取数据库表的行数
-     * 用于 queryRandom(int num)
-     * @return int
-     */
-    int getCount();
+public interface ArticleTypeService extends IService<ArticleType>, Countable {
 
     /**
      * 添加

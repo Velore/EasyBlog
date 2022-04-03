@@ -7,18 +7,20 @@ import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
 import velore.dao.TagMapper;
 import velore.po.Tag;
-import velore.service.ext.Countable;
 import velore.service.TagService;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Velore
  * @date 2022/3/17
  **/
 @Service
-public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService, Countable{
+public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService{
 
     @Resource
     private TagService tagService;

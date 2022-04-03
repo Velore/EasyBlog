@@ -21,10 +21,10 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
         implements ArticleTagService{
 
     @Resource
-    ArticleTagService articleTagService;
+    private ArticleTagService articleTagService;
 
     @Resource
-    TagService tagService;
+    private TagService tagService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

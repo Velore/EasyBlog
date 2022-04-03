@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import utils.Md5Util;
 import velore.bo.UserQueryBo;
 import velore.dao.UserMapper;
 import velore.exception.InvalidParamException;
 import velore.po.User;
 import velore.po.UserType;
-import velore.utils.TokenUtil;
 import velore.service.UserService;
-import utils.Md5Util;
-import velore.service.ext.Countable;
+import velore.utils.TokenUtil;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
 
@@ -24,15 +23,10 @@ import java.util.List;
  * @date 2022/3/2
  **/
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService , Countable {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService{
 
     @Resource
     private UserService userService;
-
-    @Override
-    public int getCount() {
-        return baseMapper.getCount();
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

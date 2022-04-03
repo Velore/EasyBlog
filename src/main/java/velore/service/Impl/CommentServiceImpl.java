@@ -10,6 +10,7 @@ import velore.exception.IllegalRequestException;
 import velore.po.Comment;
 import velore.service.ArticleService;
 import velore.service.CommentService;
+import velore.utils.TokenUtil;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,7 +23,10 @@ import java.util.List;
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService{
 
     @Resource
-    ArticleService articleService;
+    private ArticleService articleService;
+
+    @Resource
+    private CommentService commentService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -36,8 +40,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int delete(String token, Integer id) {
-        //TODO 检查token是否为评论发送者
-        return baseMapper.deleteById(id);
+        if(TokenUtil.getTokenId(token) == commentService.queryById(id).getUserId()){
+            return baseMapper.deleteById(id);
+        }
+        throw new IllegalRequestException("只能删除自己的评论");
     }
 
     @Override

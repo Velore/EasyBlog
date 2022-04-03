@@ -12,11 +12,32 @@ import java.util.List;
  **/
 public interface CommentService extends IService<Comment> {
 
+    /**
+     * 添加评论
+     * @param comment comment
+     * @return int
+     */
     int add(Comment comment);
 
+    /**
+     * 删除评论
+     * @param token token
+     * @param id id
+     * @return int
+     */
     int delete(String token, Integer id);
 
+    /**
+     * 根据id查询评论
+     * @param id id
+     * @return Comment
+     */
     Comment queryById(Integer id);
 
+    /**
+     * 根据QueryBo查询评论
+     * @param queryBo CommentQueryBo
+     * @return List<Comment>
+     */
     List<Comment> queryAllByQueryBo(CommentQueryBo queryBo);
 }

@@ -2,6 +2,7 @@ package velore.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.po.Tag;
+import velore.service.ext.Countable;
 
 import java.util.List;
 
@@ -9,13 +10,7 @@ import java.util.List;
  * @author Velore
  * @date 2022/3/16
  **/
-public interface TagService extends IService<Tag> {
-
-    /**
-     * 获取标签数量
-     * @return int
-     */
-    int getCount();
+public interface TagService extends IService<Tag>, Countable {
 
     /**
      * 新增标签

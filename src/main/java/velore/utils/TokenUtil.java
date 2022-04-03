@@ -6,8 +6,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import velore.constants.Constant;
 import velore.po.User;
+import velore.po.UserType;
+import velore.service.UserService;
 
+import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -105,6 +109,56 @@ public class TokenUtil {
         }
         DecodedJWT jwt = JWT.decode(token);
         return Integer.parseInt(jwt.getAudience().get(0));
+    }
+
+    /**
+     * 检查登录用户是否是普通用户
+     * @param token token
+     * @return boolean
+     */
+    public static boolean isOrdinary(String token){
+        return getTokenAuth(token) == UserType.ORDINARY.getValue();
+    }
+
+    /**
+     * 检查登录用户是否是管理员
+     * @param token token
+     * @return boolean
+     */
+    public static boolean isAdmin(String token){
+        return getTokenAuth(token) == UserType.ADMIN.getValue();
+    }
+
+    /**
+     * 检查登录用户是否是封禁用户
+     * @param token token
+     * @return boolean
+     */
+    public static boolean isForbid(String token){
+        return getTokenAuth(token) == UserType.FORBID.getValue();
+    }
+
+    /**
+     * 检查用户账号是否可用
+     * 可能已被删除
+     * @param token token
+     * @return boolean
+     */
+    public static boolean isAvailable(String token){
+        return getTokenAuth(token) == UserType.DELETE.getValue();
+    }
+
+    /**
+     * token是否为授权用户或者是管理员
+     * @param token token
+     * @param userId 授权用户
+     * @return boolean
+     */
+    public static boolean isPermitted(String token, Integer userId){
+        if(!isAvailable(token)) {
+            return false;
+        }
+        return isAdmin(token) || getTokenId(token) == userId;
     }
 
     /**

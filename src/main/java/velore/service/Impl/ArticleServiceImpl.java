@@ -12,8 +12,6 @@ import velore.exception.IllegalRequestException;
 import velore.exception.InvalidParamException;
 import velore.po.Article;
 import velore.service.ArticleService;
-import velore.service.ext.ArticleOps;
-import velore.service.ext.Countable;
 import velore.utils.TokenUtil;
 
 import javax.annotation.Resource;
@@ -25,8 +23,7 @@ import java.util.*;
  * @date 2022/3/26
  **/
 @Service
-public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
-        implements ArticleService, Countable, ArticleOps{
+public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService{
 
     @Resource
     private ArticleService articleService;
