@@ -6,13 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
 import velore.bo.ArticleQueryBo;
+import velore.bo.CommentQueryBo;
 import velore.constants.ArticleConstant;
 import velore.dao.ArticleMapper;
 import velore.exception.IllegalRequestException;
 import velore.exception.InvalidParamException;
 import velore.po.Article;
-import velore.service.ArticleService;
+import velore.po.ArticleTag;
+import velore.po.Tag;
+import velore.service.*;
 import velore.utils.TokenUtil;
+import velore.vo.response.ArticleBriefResponse;
+import velore.vo.response.ArticleInfoResponse;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -26,7 +31,45 @@ import java.util.*;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService{
 
     @Resource
+    private UserService userService;
+
+    @Resource
     private ArticleService articleService;
+
+    @Resource
+    private ArticleTagService articleTagService;
+
+    @Resource
+    private TagService tagService;
+
+    @Resource
+    private CommentService commentService;
+
+    @Override
+    public Object displayBrief(Article article) {
+        ArticleBriefResponse briefResponse = new ArticleBriefResponse();
+        briefResponse.setDependAttributes(article)
+                .setAuthor(userService.queryById(article.getUserId()).getUsername());
+        return briefResponse;
+    }
+
+    @Override
+    public Object displayInfo(Article article) {
+        ArticleInfoResponse infoResponse = new ArticleInfoResponse();
+        infoResponse.setArticle(article);
+        infoResponse.setAuthor(userService.queryById(article.getUserId()).getUsername());
+        List<Tag> tags = new ArrayList<>();
+        List<ArticleTag> articleTags = articleTagService.queryByArticleId(article.getId());
+        for(ArticleTag articleTag : articleTags){
+            Tag tag = tagService.queryById(articleTag.getTagId());
+            if(tag != null){
+                tags.add(tag);
+            }
+        }
+        infoResponse.setTags(tags);
+        infoResponse.setComments(commentService.queryAllByQueryBo(new CommentQueryBo(article.getId(), null)));
+        return infoResponse;
+    }
 
     @Override
     public boolean draft(Article article) {
@@ -59,6 +102,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return true;
     }
 
+    @Override
     public boolean viewAll(Map<Integer, Integer> viewList){
         if(viewList == null || viewList.isEmpty()){
             throw new InvalidParamException("viewList为空");
@@ -93,6 +137,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return service.view(articleId, 1);
     }
 
+    @Override
     public boolean likeAll(Map<Integer, Integer> likeList){
         if(likeList == null || likeList.isEmpty()){
             throw new InvalidParamException("likeList为空");
@@ -181,8 +226,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         Set<Integer> idSet = new TreeSet<>();
         List<Article> articleList = new ArrayList<>();
-        //loop == idSet.size()+3 表示循环已经无法获取更多,可以退出循环了
-        for(int loop = 0;idSet.size() <= num && loop < idSet.size()+3;loop++){
+        //breakLoopNum = 总循环次数 - 有效循环的次数
+        //loop == idSet.size()+breakLoopNum 表示循环已经无法获取更多,可以退出循环了
+        for(int loop = 0, breakLoopNum = 3;idSet.size() <= num && loop < idSet.size()+breakLoopNum;loop++){
             int randomId = RandomUtil.randomInt(1, bound);
             //若id不在set中
             if(idSet.add(randomId)){
@@ -202,10 +248,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public List<Article> queryByQueryBo(ArticleQueryBo queryBo) {
         QueryWrapper<Article> wrapper = new QueryWrapper<>();
+        //默认不显示隐藏文章
+        wrapper.eq("visible", false);
         if(queryBo.getArticleTypeId()!=null){
             wrapper.eq("article_type", queryBo.getArticleTypeId());
         }
         if(queryBo.getUserId()!=null){
+            //用户可查看自己的隐藏文章
+            wrapper.eq("visible", true);
             wrapper.eq("user_id", queryBo.getUserId());
         }
         if(queryBo.getTitle()!=null){

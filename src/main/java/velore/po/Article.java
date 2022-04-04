@@ -72,7 +72,9 @@ public class Article implements Comparable<Article>{
      */
     private Boolean recommend;
     /**
-     * 状态
+     * 文章状态:
+     * 用于用户查看自己的文章时,
+     * 分类为发布文章和草稿箱
      */
     private Integer status;
 

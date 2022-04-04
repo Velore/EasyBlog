@@ -84,7 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPhone(updateRequest.getPhone());
         user.setEmail(updateRequest.getEmail());
         user.setUsername(updateRequest.getUsername());
-        user.setPassword(updateRequest.getPassword());
+        user.setPassword(Md5Util.encrypt(updateRequest.getPassword()));
         user.setAvatar(updateRequest.getAvatar());
     }
 

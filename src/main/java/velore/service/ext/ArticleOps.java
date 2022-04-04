@@ -2,6 +2,8 @@ package velore.service.ext;
 
 import velore.po.Article;
 
+import java.util.Map;
+
 /**
  * 文章操作
  * 每次操作都会更新文章
@@ -25,6 +27,13 @@ public interface ArticleOps {
     boolean publish(Article article);
 
     /**
+     * Redis中的map
+     * @param viewList key:ArticleId   value:views
+     * @return boolean
+     */
+    boolean viewAll(Map<Integer, Integer> viewList);
+
+    /**
      * 浏览文章数+num
      * views+num
      * @param id id
@@ -34,11 +43,18 @@ public interface ArticleOps {
     boolean view(Integer id, Integer num);
 
     /**
-     * num = 1
+     * 浏览文章数+num,num = 1
      * @param id id
      * @return boolean
      */
     boolean view(Integer id);
+
+    /**
+     * Redis中的map
+     * @param likeList key:ArticleId   value:likeNum
+     * @return boolean
+     */
+    boolean likeAll(Map<Integer, Integer> likeList);
 
     /**
      * 文章点赞数+num
@@ -50,7 +66,7 @@ public interface ArticleOps {
     boolean like(Integer id, Integer num);
 
     /**
-     * num = 1
+     * 文章点赞数+num,num = 1
      * @param id id
      * @return boolean
      */

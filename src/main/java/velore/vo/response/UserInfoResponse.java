@@ -1,5 +1,6 @@
 package velore.vo.response;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel("用户信息Response")
 public class UserInfoResponse {
 
     private Integer id;
@@ -48,7 +50,7 @@ public class UserInfoResponse {
         phone = user.getPhone();
         email = user.getEmail();
         avatar = user.getAvatar();
-        userType = user.getUserType().getValue();
+        userType = user.getUserType();
         lastLoginTime = user.getLastLoginTime();
         createTime = user.getCreateTime();
         updateTime = user.getUpdateTime();

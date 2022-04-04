@@ -95,9 +95,10 @@ public class UserController {
     @GetMapping("/queryUserLikeName/{name}")
     public Result<List<User>> queryUserLikeName(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String name){
-        if(!Constant.ADMIN_ID_SET.contains(TokenUtil.getTokenId(token))){
+        if(!TokenUtil.isAdmin(token)){
             return Result.fail(ResultType.NO_PERMIT);
         }
+        //TODO User -> UserInfoResponse
         return Result.success(userService.queryLikeName(name));
     }
 
@@ -105,9 +106,10 @@ public class UserController {
     @GetMapping("/queryUserByUserType/{userType}")
     public Result<List<User>> queryUserByUserType(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userType){
-        if(!Constant.ADMIN_ID_SET.contains(TokenUtil.getTokenId(token))){
+        if(!TokenUtil.isAdmin(token)){
             return Result.fail(ResultType.NO_PERMIT);
         }
+        //TODO User -> UserInfoResponse
         return Result.success(userService.queryByUserType(userType));
     }
 

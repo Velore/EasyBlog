@@ -5,6 +5,7 @@ import velore.bo.ArticleQueryBo;
 import velore.po.Article;
 import velore.service.ext.ArticleOps;
 import velore.service.ext.Countable;
+import velore.service.ext.SeparateDisplay;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Velore
  * @date 2022/3/16
  **/
-public interface ArticleService extends IService<Article>, Countable, ArticleOps {
+public interface ArticleService extends IService<Article>, Countable, ArticleOps, SeparateDisplay<Article> {
 
     /**
      * 该方法作为(draft,publish底层方法)不暴露接口

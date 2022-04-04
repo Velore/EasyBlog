@@ -10,8 +10,11 @@ import velore.po.Article;
 import velore.service.ArticleService;
 import velore.service.Impl.ArticleServiceImpl;
 import velore.vo.request.ArticleRequest;
+import velore.vo.response.ArticleBriefResponse;
+import velore.vo.response.ArticleInfoResponse;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,19 +78,29 @@ public class ArticleController {
 
     @ApiOperation("根据id查询文章")
     @GetMapping("/queryArticleById/{id}")
-    public Result<Article> queryArticleById(@PathVariable Integer id){
-        return Result.success(articleService.queryById(id));
+    public Result<ArticleInfoResponse> queryArticleById(@PathVariable Integer id){
+        return Result.success((ArticleInfoResponse) articleService.displayInfo(articleService.queryById(id)));
     }
 
     @ApiOperation("随机查询指定数量的文章")
     @GetMapping("/queryRandom/{num}")
-    public Result<List<Article>> queryRandom(@PathVariable Integer num){
-        return Result.success(articleService.queryRandom(num));
+    public Result<List<ArticleBriefResponse>> queryRandom(@PathVariable Integer num){
+        List<Article> articles = articleService.queryRandom(num);
+        List<ArticleBriefResponse> briefResponses = new ArrayList<>();
+        for(Article article : articles){
+            briefResponses.add((ArticleBriefResponse) articleService.displayBrief(article));
+        }
+        return Result.success(briefResponses);
     }
 
     @ApiOperation("条件查询文章")
     @PostMapping("/queryArticleByQueryBo")
-    public Result<List<Article>> queryArticleByQueryBo(@RequestBody ArticleQueryBo queryBo){
-        return Result.success(articleService.queryByQueryBo(queryBo));
+    public Result<List<ArticleBriefResponse>> queryArticleByQueryBo(@RequestBody ArticleQueryBo queryBo){
+        List<Article> articles = articleService.queryByQueryBo(queryBo);
+        List<ArticleBriefResponse> briefResponses = new ArrayList<>();
+        for(Article article : articles){
+            briefResponses.add((ArticleBriefResponse) articleService.displayBrief(article));
+        }
+        return Result.success(briefResponses);
     }
 }
