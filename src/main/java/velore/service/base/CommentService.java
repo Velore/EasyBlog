@@ -1,4 +1,4 @@
-package velore.service;
+package velore.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.CommentQueryBo;
@@ -37,7 +37,7 @@ public interface CommentService extends IService<Comment> {
     /**
      * 根据QueryBo查询评论
      * @param queryBo CommentQueryBo
-     * @return List<Comment>
+     * @return Comment List
      */
     List<Comment> queryAllByQueryBo(CommentQueryBo queryBo);
 }

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import velore.dao.ArticleTagMapper;
 import velore.po.ArticleTag;
-import velore.service.ArticleTagService;
-import velore.service.TagService;
+import velore.service.base.ArticleTagService;
+import velore.service.base.TagService;
 
 import javax.annotation.Resource;
 import java.util.List;

@@ -14,7 +14,7 @@ import velore.exception.InvalidParamException;
 import velore.po.Article;
 import velore.po.ArticleTag;
 import velore.po.Tag;
-import velore.service.*;
+import velore.service.base.*;
 import velore.utils.TokenUtil;
 import velore.vo.response.ArticleBriefResponse;
 import velore.vo.response.ArticleInfoResponse;
@@ -49,7 +49,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public Object displayBrief(Article article) {
         ArticleBriefResponse briefResponse = new ArticleBriefResponse();
         briefResponse.setDependAttributes(article)
-                .setAuthor(userService.queryById(article.getUserId()).getUsername());
+                .setAuthor(userService.queryById(article.getUserId()));
         return briefResponse;
     }
 
@@ -257,6 +257,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             //用户可查看自己的隐藏文章
             wrapper.eq("visible", true);
             wrapper.eq("user_id", queryBo.getUserId());
+        }else{
+            //否则只查询已发布文章
+            wrapper.eq("status", ArticleConstant.ARTICLE_STATUS_PUBLISHED);
         }
         if(queryBo.getTitle()!=null){
             wrapper.like("title", queryBo.getTitle());

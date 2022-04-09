@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
 import velore.dao.TagMapper;
 import velore.po.Tag;
-import velore.service.TagService;
+import velore.service.base.TagService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

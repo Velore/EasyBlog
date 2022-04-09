@@ -1,4 +1,4 @@
-package velore.service;
+package velore.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.ArticleQueryBo;

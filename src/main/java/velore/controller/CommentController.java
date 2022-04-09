@@ -7,7 +7,7 @@ import result.Result;
 import velore.bo.CommentQueryBo;
 import velore.constants.Constant;
 import velore.po.Comment;
-import velore.service.CommentService;
+import velore.service.base.CommentService;
 import velore.vo.request.CommentRequest;
 
 import javax.annotation.Resource;

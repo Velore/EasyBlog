@@ -7,7 +7,7 @@ import result.Result;
 import velore.bo.ArticleQueryBo;
 import velore.constants.Constant;
 import velore.po.Article;
-import velore.service.ArticleService;
+import velore.service.base.ArticleService;
 import velore.service.Impl.ArticleServiceImpl;
 import velore.vo.request.ArticleRequest;
 import velore.vo.response.ArticleBriefResponse;

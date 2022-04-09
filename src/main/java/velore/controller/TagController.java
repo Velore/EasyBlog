@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.po.Tag;
-import velore.service.TagService;
+import velore.service.base.TagService;
 
 import javax.annotation.Resource;
 import java.util.List;

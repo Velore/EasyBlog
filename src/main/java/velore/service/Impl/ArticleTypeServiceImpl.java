@@ -7,8 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
 import velore.dao.ArticleTypeMapper;
 import velore.po.ArticleType;
-import velore.service.ArticleTypeService;
-import velore.service.ext.Countable;
+import velore.service.base.ArticleTypeService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

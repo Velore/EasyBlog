@@ -8,8 +8,8 @@ import velore.bo.CommentQueryBo;
 import velore.dao.CommentMapper;
 import velore.exception.IllegalRequestException;
 import velore.po.Comment;
-import velore.service.ArticleService;
-import velore.service.CommentService;
+import velore.service.base.ArticleService;
+import velore.service.base.CommentService;
 import velore.utils.TokenUtil;
 
 import javax.annotation.Resource;

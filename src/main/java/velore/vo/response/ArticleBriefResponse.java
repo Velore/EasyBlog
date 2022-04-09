@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import velore.constants.ArticleConstant;
 import velore.po.Article;
+import velore.po.User;
 
 import java.time.LocalDateTime;
 
@@ -20,16 +22,16 @@ import java.time.LocalDateTime;
 public class ArticleBriefResponse {
 
     /**
-     * 展示的content最大值
-     */
-    private static int BRIEF_MAX_LENGTH = 64;
-
-    /**
      * articleId
      */
     private Integer id;
 
     private String title;
+
+    /**
+     * userId
+     */
+    private Integer authorId;
 
     /**
      * username
@@ -55,10 +57,17 @@ public class ArticleBriefResponse {
     public ArticleBriefResponse setDependAttributes(Article article){
         setId(article.getId());
         setTitle(article.getTitle());
-        setBrief(article.getContent().substring(0, BRIEF_MAX_LENGTH-1));
+        String content = article.getContent();
+        setBrief((content.length()> ArticleConstant.ARTICLE_CONTENT_BRIEF_MAX_LENGTH)?
+                content.substring(0, ArticleConstant.ARTICLE_CONTENT_BRIEF_MAX_LENGTH-1):content);
         setViews(article.getViews());
         setLikeNum(article.getLikeNum());
         setPublishTime(article.getPublishTime());
         return this;
+    }
+
+    public void setAuthor(User user) {
+        this.author = user.getUsername();
+        this.authorId = user.getId();
     }
 }

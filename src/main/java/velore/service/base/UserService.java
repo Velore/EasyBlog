@@ -1,4 +1,4 @@
-package velore.service;
+package velore.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.UserQueryBo;
@@ -40,7 +40,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 封禁用户
-     * 修改userType: 1 -> 3
+     * 修改userType为3
      * @param token 管理员token
      * @param banId id
      * @return 是否封禁成功
@@ -49,7 +49,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 解除封禁
-     * 修改userType: 3 -> 1
+     * 修改userType为1
      * @param token 管理员token
      * @param banId id
      * @return 是否解除成功

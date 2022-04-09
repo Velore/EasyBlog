@@ -3,9 +3,8 @@ package velore;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import utils.Md5Util;
-import velore.bo.ArticleQueryBo;
-import velore.service.ArticleService;
-import velore.service.UserService;
+import velore.service.base.ArticleService;
+import velore.service.base.UserService;
 
 import javax.annotation.Resource;
 

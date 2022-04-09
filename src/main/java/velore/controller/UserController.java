@@ -8,12 +8,13 @@ import result.ResultType;
 import velore.constants.Constant;
 import velore.po.User;
 import velore.utils.TokenUtil;
-import velore.service.UserService;
+import velore.service.base.UserService;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
 import velore.vo.response.UserInfoResponse;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -93,24 +94,32 @@ public class UserController {
 
     @ApiOperation("根据名字模糊查询用户")
     @GetMapping("/queryUserLikeName/{name}")
-    public Result<List<User>> queryUserLikeName(
+    public Result<List<UserInfoResponse>> queryUserLikeName(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String name){
         if(!TokenUtil.isAdmin(token)){
             return Result.fail(ResultType.NO_PERMIT);
         }
-        //TODO User -> UserInfoResponse
-        return Result.success(userService.queryLikeName(name));
+        List<User> users = userService.queryLikeName(name);
+        List<UserInfoResponse> userInfoResponses = new ArrayList<>();
+        for(User u : users){
+            userInfoResponses.add(new UserInfoResponse(u));
+        }
+        return Result.success(userInfoResponses);
     }
 
     @ApiOperation("根据用户权限查询所有相同权限的用户")
     @GetMapping("/queryUserByUserType/{userType}")
-    public Result<List<User>> queryUserByUserType(
+    public Result<List<UserInfoResponse>> queryUserByUserType(
             @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userType){
         if(!TokenUtil.isAdmin(token)){
             return Result.fail(ResultType.NO_PERMIT);
         }
-        //TODO User -> UserInfoResponse
-        return Result.success(userService.queryByUserType(userType));
+        List<User> users = userService.queryByUserType(userType);
+        List<UserInfoResponse> userInfoResponses = new ArrayList<>();
+        for(User u : users){
+            userInfoResponses.add(new UserInfoResponse(u));
+        }
+        return Result.success(userInfoResponses);
     }
 
 }

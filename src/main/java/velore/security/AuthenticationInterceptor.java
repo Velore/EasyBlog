@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import velore.service.UserService;
+import velore.service.base.UserService;
 import velore.utils.TokenUtil;
 
 import javax.servlet.http.HttpServletRequest;

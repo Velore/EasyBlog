@@ -10,7 +10,7 @@ import velore.dao.UserMapper;
 import velore.exception.InvalidParamException;
 import velore.po.User;
 import velore.po.UserType;
-import velore.service.UserService;
+import velore.service.base.UserService;
 import velore.utils.TokenUtil;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;

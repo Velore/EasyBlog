@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.po.ArticleType;
-import velore.service.ArticleTypeService;
+import velore.service.base.ArticleTypeService;
 
 import javax.annotation.Resource;
 import java.util.List;

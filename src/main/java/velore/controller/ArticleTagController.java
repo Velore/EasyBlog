@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.constants.Constant;
 import velore.po.ArticleTag;
-import velore.service.ArticleTagService;
+import velore.service.base.ArticleTagService;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -43,9 +43,9 @@ public class ArticleTagController {
     }
 
     @ApiOperation("根据文章id查询文章携带的标签")
-    @GetMapping("/queryArticleTagByArticleId/{articleId}")
-    public Result<List<ArticleTag>> queryArticleTagByArticleId(@PathVariable Integer articleId){
-        return Result.success(articleTagService.queryByArticleId(articleId));
+    @GetMapping("/queryArticleTagByArticleId/{id}")
+    public Result<List<ArticleTag>> queryArticleTagByArticleId(@PathVariable Integer id){
+        return Result.success(articleTagService.queryByArticleId(id));
     }
 
     @ApiOperation("根据标签id查询携带该标签的文章")

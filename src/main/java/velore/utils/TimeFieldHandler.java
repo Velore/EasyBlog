@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * 实体类共有属性自动填充;
- * create_time & update_time;
+ * create_time和update_time;
  * @author Velore
  * @date 2022/3/2
  */

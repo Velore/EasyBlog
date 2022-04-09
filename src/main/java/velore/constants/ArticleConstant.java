@@ -25,4 +25,9 @@ public class ArticleConstant {
      * 已删除
      */
     public static final Integer ARTICLE_STATUS_DELETED = -1;
+
+    /**
+     * 文章展示的简要内容的最大值
+     */
+    public static int ARTICLE_CONTENT_BRIEF_MAX_LENGTH = 64;
 }
