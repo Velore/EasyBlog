@@ -16,7 +16,7 @@ spring:
       max-wait: 60000
       poolPreparedStatements: true
 
-      filters: stat,wall,log4j
+      filters: stat,wall
       maxPoolPreparedStatementPerConnectionSize: 20
       useGlobalDataSourceStat: true
       #  慢sql检测
@@ -43,3 +43,5 @@ mybatis-plus:
 server:
   port: 7777
   shutdown: graceful
+logging:
+  config: classpath:log4j2.xml
