@@ -2,21 +2,17 @@ package velore.service.Impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import utils.RandomUtil;
 import velore.bo.TagQueryBo;
 import velore.dao.TagMapper;
 import velore.po.Tag;
 import velore.service.base.TagService;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Velore
@@ -29,7 +25,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     private TagService tagService;
 
     @Override
-    public int getTotal() {
+    public List<Integer> getTotal() {
         return baseMapper.getTotal();
     }
 
@@ -72,31 +68,23 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public List<Tag> queryRandom(Integer num) {
-        int bound = tagService.getTotal();
-        if(bound < num){
-            num = bound;
-        }
-        Set<Integer> idSet = new TreeSet<>();
-        List<Tag> tagList = new ArrayList<>();
-        while(idSet.size() < num){
-            int randomId = RandomUtil.randomInt(bound);
-            if(idSet.add(randomId)){
-                Tag tag = tagService.queryById(randomId);
-                if(tag != null){
-                    tagList.add(tag);
-                    continue;
-                }
-                idSet.remove(randomId);
-            }
-        }
-        return tagList;
+        // 获取全部id
+        List<Integer> idList = tagService.getTotal();
+        // 打乱id的顺序
+        Collections.shuffle(idList);
+        // 如果要查询的数量num大于总id数, 则返回全部id
+        // 否则返回乱序后排在最前面的num个id
+        num = Math.min(num, idList.size());
+        return baseMapper.selectBatchIds(idList.subList(0, num));
     }
 
     @Override
     public IPage<Tag> queryLikeName(TagQueryBo queryBo) {
         IPage<Tag> page = queryBo.getPage();
-        LambdaQueryChainWrapper<Tag> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper)
-                .like(Tag::getName, queryBo.getTagName());
+        LambdaQueryChainWrapper<Tag> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
+        if(queryBo.getTagName()!=null) {
+            wrapper.like(Tag::getName, queryBo.getTagName());
+        }
         return baseMapper.selectPage(page, wrapper.getWrapper());
     }
 }

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import velore.po.Article;
 
+import java.util.List;
+
 /**
  * @author Velore
  * @date 2022/3/17
@@ -11,5 +13,5 @@ import velore.po.Article;
 @Mapper
 public interface ArticleMapper extends BaseMapper<Article> {
 
-    int getTotal();
+    List<Integer> getTotal();
 }

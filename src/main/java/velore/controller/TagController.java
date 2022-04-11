@@ -55,6 +55,7 @@ public class TagController {
             @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false)Integer total,
             @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer size,
             @PathVariable Integer currentPage){
+        System.out.println("current:"+ currentPage+",size:"+ size+",total:"+ total);
         TagQueryBo queryBo = new TagQueryBo(new PageQueryBo(currentPage, size ,total));
         IPage<Tag> page = tagService.queryLikeName((TagQueryBo)queryBo.validate());
         return Result.success(new PageResponse<>(page));

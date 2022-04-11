@@ -6,17 +6,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import utils.RandomUtil;
 import velore.bo.PageQueryBo;
 import velore.dao.ArticleTypeMapper;
 import velore.po.ArticleType;
 import velore.service.base.ArticleTypeService;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Velore
@@ -30,7 +27,7 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
     private ArticleTypeService articleTypeService;
 
     @Override
-    public int getTotal() {
+    public List<Integer> getTotal() {
         return baseMapper.getTotal();
     }
 
@@ -59,34 +56,21 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
 
     @Override
     public IPage<ArticleType> queryAll(PageQueryBo queryBo) {
-        IPage<ArticleType> page = Page.of(
-                queryBo.getCurrentPage(),
-                queryBo.getPageSize(),
-                queryBo.getTotalRecord(),
-                queryBo.getTotalRecord() == 0);
+        IPage<ArticleType> page = queryBo.getPage();
+        System.out.println(page.getCurrent()+","+ page.getSize()+","+ page.getTotal());
         return baseMapper.selectPage(page, new LambdaQueryChainWrapper<>(this.baseMapper).getWrapper());
     }
 
     @Override
     public List<ArticleType> queryRandom(int num) {
-        int bound = articleTypeService.getTotal();
-        if(bound < num){
-            num = bound;
-        }
-        Set<Integer> idSet = new TreeSet<>();
-        List<ArticleType> articleTypeList = new ArrayList<>();
-        while(idSet.size() < num){
-            int randomId = RandomUtil.randomInt(bound);
-            if(idSet.add(randomId)){
-                ArticleType articleType = articleTypeService.queryById(randomId);
-                if(articleType!=null) {
-                    articleTypeList.add(articleType);
-                    continue;
-                }
-                idSet.remove(randomId);
-            }
-        }
-        return articleTypeList;
+        // 获取全部id
+        List<Integer> idList = articleTypeService.getTotal();
+        // 打乱id的顺序
+        Collections.shuffle(idList);
+        // 如果要查询的数量num大于总id数, 则返回全部id
+        // 否则返回乱序后排在最前面的num个id
+        num = Math.min(num, idList.size());
+        return baseMapper.selectBatchIds(idList.subList(0, num));
     }
 
     @Override

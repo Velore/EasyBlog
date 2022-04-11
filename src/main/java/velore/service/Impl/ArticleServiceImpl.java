@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import utils.RandomUtil;
 import velore.bo.ArticleQueryBo;
 import velore.bo.CommentQueryBo;
 import velore.bo.PageQueryBo;
@@ -14,6 +13,7 @@ import velore.dao.ArticleMapper;
 import velore.exception.IllegalRequestException;
 import velore.exception.InvalidParamException;
 import velore.po.Article;
+import velore.po.User;
 import velore.service.base.ArticleService;
 import velore.service.base.ArticleTagService;
 import velore.service.base.CommentService;
@@ -25,6 +25,7 @@ import velore.vo.response.ArticleInfoResponse;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Velore
@@ -47,10 +48,25 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Object displayBrief(Article article) {
-        ArticleBrief briefResponse = new ArticleBrief();
-        briefResponse.setDependAttributes(article)
+        ArticleBrief brief = new ArticleBrief();
+        brief.setDependAttributes(article)
                 .setAuthor(userService.queryById(article.getUserId()));
-        return briefResponse;
+        return brief;
+    }
+
+    @Override
+    public Object displayBrief(List<Article> articles) {
+        int size = articles.size();
+        List<ArticleBrief> briefList = new ArrayList<>(size+1);
+        for (Article article : articles) {
+            briefList.add(new ArticleBrief().setDependAttributes(article));
+        }
+        List<User> authorList = userService.getBaseMapper().selectBatchIds(articles.stream()
+                .map(Article::getUserId).collect(Collectors.toList()));
+        for(int i = 0 ; i<size ; i++){
+            briefList.get(i).setAuthor(authorList.get(i));
+        }
+        return briefList;
     }
 
     @Override
@@ -178,7 +194,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public int getTotal() {
+    public List<Integer> getTotal() {
         return baseMapper.getTotal();
     }
 
@@ -218,29 +234,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public List<Article> queryRandom(Integer num) {
-        int bound = articleService.getTotal();
-        if(bound < num){
-            num = bound;
-        }
-        Set<Integer> idSet = new TreeSet<>();
-        List<Article> articleList = new ArrayList<>();
-        //breakLoopNum = 总循环次数 - 有效循环的次数
-        //loop == idSet.size()+breakLoopNum 表示循环已经无法获取更多,可以退出循环了
-        for(int loop = 0, breakLoopNum = 3;idSet.size() <= num && loop < idSet.size()+breakLoopNum;loop++){
-            int randomId = RandomUtil.randomInt(1, bound);
-            //若id不在set中
-            if(idSet.add(randomId)){
-                Article article = articleService.queryById(randomId);
-                //若文章存在且没有设置隐藏,则添加
-                if(article!=null && article.getVisible()){
-                    articleList.add(article);
-                    continue;
-                }
-                //文章没有被添加时删除本次id
-                idSet.remove(randomId);
-            }
-        }
-        return articleList;
+        // 获取全部id
+        List<Integer> idList = articleService.getTotal();
+        // 打乱id的顺序
+        Collections.shuffle(idList);
+        // 如果要查询的数量num大于总id数, 则返回全部id
+        // 否则返回乱序后排在最前面的num个id
+        num = Math.min(num, idList.size());
+        return baseMapper.selectBatchIds(idList.subList(0, num));
     }
 
     @Override

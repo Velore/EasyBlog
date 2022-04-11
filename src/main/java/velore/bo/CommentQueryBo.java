@@ -20,7 +20,9 @@ public class CommentQueryBo extends PageQueryBo{
     private Integer userId;
 
     public CommentQueryBo(Integer articleId, PageQueryBo queryBo){
-        super(queryBo.currentPage, queryBo.pageSize, queryBo.totalRecord);
+        setCurrentPage(queryBo.getCurrentPage());
+        setPageSize(queryBo.getPageSize());
+        setTotalRecord(queryBo.getTotalRecord());
         this.articleId = articleId;
     }
 }

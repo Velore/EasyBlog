@@ -8,7 +8,7 @@
     </resultMap>
 
     <select id="getTotal" resultType="Integer">
-        select count(id) from easy_blog.tag;
+        select id from easy_blog.tag;
     </select>
 
 </mapper>

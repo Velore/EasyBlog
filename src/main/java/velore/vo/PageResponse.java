@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import velore.bo.PageQueryBo;
 import velore.constants.ReqConstant;
 
 import java.util.ArrayList;
@@ -45,16 +46,23 @@ public class PageResponse<T> {
         this.data = page.getRecords();
     }
 
+    public PageResponse(PageQueryBo queryBo){
+        currentPage = queryBo.getCurrentPage();
+        pageSize = queryBo.getPageSize();
+        totalRecord = queryBo.getTotalRecord();
+        this.totalPage = Math.min(totalRecord / pageSize,1);
+    }
+
     /**
      * @param currentPage    当前页数
      * @param pageSize    每页记录数
      * @param totalRecord  总记录数
      */
     public PageResponse(int currentPage, int pageSize, int totalRecord){
+        this.currentPage = currentPage;
         this.pageSize = pageSize;
         this.totalRecord = totalRecord;
-        this.currentPage = currentPage;
-        this.totalPage = (totalRecord > pageSize) ? totalRecord / pageSize : 1;
+        this.totalPage = Math.min(totalRecord / pageSize, 1);
     }
 
     /**
@@ -68,7 +76,7 @@ public class PageResponse<T> {
         this.totalRecord = totalRecord;
         this.pageSize = pageSize;
         this.currentPage = currentPage;
-        this.totalPage = (totalRecord > pageSize) ? totalRecord / pageSize : 1;
+        this.totalPage = Math.min(totalRecord / pageSize, 1);
     }
 
     /**

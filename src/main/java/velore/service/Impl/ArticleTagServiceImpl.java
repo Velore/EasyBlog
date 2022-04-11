@@ -13,11 +13,12 @@ import velore.po.Tag;
 import velore.service.base.ArticleService;
 import velore.service.base.ArticleTagService;
 import velore.service.base.TagService;
+import velore.utils.CastUtil;
 import velore.vo.ArticleBrief;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Velore
@@ -59,32 +60,32 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
     public List<Tag> queryByArticleId(Integer id) {
         QueryWrapper<ArticleTag> wrapper = new QueryWrapper<>();
         wrapper.eq("article_id", id);
-        List<Tag> tags = new ArrayList<>();
-        List<ArticleTag> articleTags = baseMapper.selectList(wrapper);
-        for(ArticleTag articleTag : articleTags){
-            Tag tag = tagService.queryById(articleTag.getTagId());
-            if(tag != null){
-                tags.add(tag);
-            }
-        }
-        return tags;
+        List<Integer> tagIds = baseMapper.selectList(wrapper).stream()
+                .map(ArticleTag::getTagId).collect(Collectors.toList());
+        return tagService.getBaseMapper().selectBatchIds(tagIds);
     }
 
+    @SuppressWarnings("")
     @Override
     public IPage<ArticleBrief> queryByTagId(Integer id, PageQueryBo queryBo) {
         IPage<ArticleTag> page = queryBo.getPage();
         page = baseMapper.selectPage(page, new LambdaQueryChainWrapper<>(this.baseMapper)
                 .eq(ArticleTag::getTagId, id).getWrapper());
-        List<ArticleBrief> articles = new ArrayList<>();
-        for(ArticleTag articleTag : page.getRecords()){
-            //获取每一篇文章的Brief
-            ArticleBrief article = (ArticleBrief) articleService.displayBrief(
-                    articleService.queryById(articleTag.getArticleId())
-            );
-            if(article != null){
-                articles.add(article);
-            }
-        }
-        return queryBo.getPage(articles);
+        List<Integer> articleIds = page.getRecords().stream()
+                .map(ArticleTag::getArticleId).collect(Collectors.toList());
+        //类型转换
+        List<ArticleBrief> briefs = CastUtil.cast(
+                articleService.displayBrief(articleService.getBaseMapper().selectBatchIds(articleIds))
+                , ArticleBrief.class);
+//            //获取每一篇文章的Brief
+//        for(Integer i : articleIds){
+//            ArticleBrief article = (ArticleBrief) articleService.displayBrief(
+//                    articleService.queryById(i)
+//            );
+//            if(article != null){
+//                briefs.add(article);
+//            }
+//        }
+        return queryBo.getPage(briefs);
     }
 }

@@ -16,14 +16,29 @@ spring:
       max-wait: 60000
       poolPreparedStatements: true
 
-      filters: stat,wall
+      filters: stat,wall,log4j2
+      filter:
+        stat:
+          # 开启DruidDataSource状态监控
+          enabled: true
+          # 数据库的类型
+          db-type: mysql
+          # 开启慢SQL记录功能
+          log-slow-sql: true
+          # 默认3000毫秒，这里超过2s，就是慢，记录到日志
+          slow-sql-millis: 2000
+        # 配置WebStatFilter，用于采集web关联监控的数据
+      web-stat-filter:
+        # 启动 StatFilter
+        enabled: true
+        # 过滤所有url
+        url-pattern: /*
       maxPoolPreparedStatementPerConnectionSize: 20
       useGlobalDataSourceStat: true
       #  慢sql检测
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   main:
     allow-bean-definition-overriding: true
-
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml

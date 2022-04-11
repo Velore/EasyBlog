@@ -3,7 +3,6 @@ package velore.bo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Velore
@@ -11,18 +10,26 @@ import lombok.NoArgsConstructor;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 @AllArgsConstructor
 public class TagQueryBo extends PageQueryBo{
 
     private String tagName;
 
+    /**
+     * 禁用空构造器
+     */
+    private TagQueryBo(){}
+
     public TagQueryBo(PageQueryBo queryBo){
-        super(queryBo.currentPage, queryBo.pageSize, queryBo.totalRecord);
+        setCurrentPage(queryBo.getCurrentPage());
+        setPageSize(queryBo.getPageSize());
+        setTotalRecord(queryBo.getTotalRecord());
     }
 
     public TagQueryBo(String tagName, PageQueryBo queryBo){
-        super(queryBo.currentPage, queryBo.pageSize, queryBo.totalRecord);
+        setCurrentPage(queryBo.getCurrentPage());
+        setPageSize(queryBo.getPageSize());
+        setTotalRecord(queryBo.getTotalRecord());
         this.tagName = tagName;
     }
 }

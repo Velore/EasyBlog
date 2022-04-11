@@ -19,27 +19,41 @@ import java.util.List;
 @AllArgsConstructor
 public class PageQueryBo {
 
-    public Integer currentPage;
+    private Integer currentPage;
 
-    public Integer pageSize;
+    private Integer pageSize;
 
-    public Integer totalRecord;
+    private Integer totalRecord;
 
     /**
      * 整理分页的数据
      * @return queryBo
      */
     public PageQueryBo validate(){
-        pageSize = (pageSize == null)? ReqConstant.PAGE_SIZE : pageSize;
+        pageSize = (pageSize == null) ? ReqConstant.PAGE_SIZE : pageSize;
         // totalRecord == null 表示 需要查询数据库获取总记录数,设置为0
-        totalRecord = (totalRecord == null)? 0 : totalRecord;
-        //
-        currentPage = (currentPage == null)? 1 : (currentPage <= 0 )? 1: currentPage;
+        currentPage = (currentPage == null) ? 0 : (currentPage <= 0) ? 1 : currentPage;
+        totalRecord = (totalRecord == null) ? 0 : totalRecord;
         if(totalRecord != 0){
-            currentPage %= (totalRecord/pageSize);
+            currentPage %= Math.min(totalRecord/pageSize, currentPage+1);
         }
         return this;
     }
+
+    /**
+     * 第二种整理数据的方式
+     * @param t t
+     * @param <T> T
+     */
+    public static <T extends PageQueryBo> void validate(T t){
+        t.setPageSize((t.getPageSize() == null) ? ReqConstant.PAGE_SIZE : t.getPageSize());
+        t.setCurrentPage((t.getCurrentPage() == null) ? 0 : (t.getCurrentPage() <= 0) ? 1 : t.getCurrentPage());
+        t.setTotalRecord((t.getTotalRecord() == null) ? 0 : t.getTotalRecord());
+        if(t.getTotalRecord() != 0){
+            t.setCurrentPage(t.getCurrentPage() & Math.min(t.getTotalRecord()/t.getPageSize(), t.getCurrentPage()+1));
+        }
+    }
+
 
     /**
      * 根据分页查询PageQueryBo获取IPage

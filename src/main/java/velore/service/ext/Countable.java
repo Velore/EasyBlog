@@ -1,5 +1,7 @@
 package velore.service.ext;
 
+import java.util.List;
+
 /**
  * 计算数据库表的行数
  * @author Velore
@@ -8,8 +10,8 @@ package velore.service.ext;
 public interface Countable {
 
     /**
-     * 计算数据库表的行数
-     * @return 有多少行数据
+     * 计算数据库表的全部id
+     * @return id list
      */
-    int getTotal();
+    List<Integer> getTotal();
 }

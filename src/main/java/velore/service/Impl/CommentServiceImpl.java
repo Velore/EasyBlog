@@ -2,7 +2,6 @@ package velore.service.Impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +53,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     public IPage<Comment> queryByQueryBo(CommentQueryBo queryBo) {
-        IPage<Comment> page = new Page<>(queryBo.currentPage, queryBo.pageSize, queryBo.getTotalRecord());
+        IPage<Comment> page = queryBo.getPage();
         LambdaQueryChainWrapper<Comment> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
         if(queryBo.getArticleId() != null){
             wrapper.eq(Comment::getArticleId, queryBo.getArticleId());

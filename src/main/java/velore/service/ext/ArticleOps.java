@@ -5,7 +5,7 @@ import velore.po.Article;
 import java.util.Map;
 
 /**
- * 文章操作
+ * 文章业务操作
  * 每次操作都会更新文章
  * @author Velore
  * @date 2022/4/2

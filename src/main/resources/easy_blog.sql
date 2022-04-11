@@ -26,7 +26,8 @@ create table if not exists article_type(
     id int not null primary key auto_increment,
     name varchar(16) not null comment '类型名',
     level int not null default 1 comment '类型等级',
-    description varchar(100) null default null comment '类型描述'
+    description varchar(100) null default null comment '类型描述',
+    article_num int not null default 0 comment '文章数量'
 )comment '文章类型';
 
 drop table if exists article;
@@ -89,22 +90,28 @@ insert into user(user_reg_id, username, password, user_type, last_login_time, cr
 ,('user2', 'user2', '11291F81C1A9C880D045B4E1590904A07EC049E17373C814D3E70378', 2, now(), '2022-3-5 11:12:12', now())
 ,('user3', 'user3', '3770035DB99A97B2CE0B7BCE4BDCBE3836BF45198A63E3A1C8AFD494', 2, now(), '2022-3-7 7:11:11', now());
 
-insert into article_type(name, level, description) values
-('技术类', 1, '技术类文章的类型')
-,('杂谈类', 1, '杂谈类文章的类型');
+insert into article_type(name, level, description, article_num) values
+('技术类', 1, '技术类文章的类型', 6)
+,('杂谈类', 1, '杂谈类文章的类型', 0)
+,('灌水区', 2, '灌水', 0)
+,('类型a', 2, 'bbbbb', 0)
+,('类型b', 2, 'aaaaa', 0);
 
+# 15个标签用于测试分页查询
 insert into tag(name, description, article_num) values
-('前端', '前端标签', 1)
-,('Java', 'Java标签', 1)
-,('mysql', 'mysql标签', 0);
+('前端', '前端标签', 1),('Java', 'Java标签', 1),('mysql', 'mysql标签', 0)
+,('HTML','HTML标签',0),('Redis','redis标签',0),('CSS','css标签',0)
+,('JS','JavaScript标签',0),('Python','python标签',0),('操作系统','os',0)
+,('单机游戏','单机',0),('多人游戏','多人联机',0),('卡牌游戏','卡牌',0)
+,('新闻','新闻',0),('杂谈','杂谈',0),('消息队列','MQ',0);
 
-insert into article(user_id, title, content, views, like_num, status, publish_time, create_time, update_time) values
-(3, 'Spring', 'aaa', 7, 4, 2, '2022-3-3 11:11:11', '2021-1-2 11:11:11', '2022-3-3 11:11:11')
-,(3, 'MySql', '111', 9, 6, 2, '2022-3-3 11:11:11', '2022-3-1 11:11:11', '2022-3-3 11:11:11')
-,(4, 'Java基础', '111', 30, 15, 2, '2022-3-8 11:11:11', '2022-3-7 11:11:11', '2022-3-8 11:11:11')
-,(5, 'Java面试', '111', 25, 17, 2, '2022-3-9 11:11:11', '2022-3-7 11:11:11', '2022-3-9 11:11:11')
-,(4, 'HTML', '111', 0, 0, 1, '2022-3-10 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11')
-,(5, 'CSS', '111', 12, 3, 2, '2022-3-15 11:11:11', '2022-3-12 11:11:11', '2022-3-15 11:11:11');
+insert into article(article_type, user_id, title, content, views, like_num, status, publish_time, create_time, update_time) values
+(1, 3, 'Spring', 'aaa', 7, 4, 2, '2022-3-3 11:11:11', '2021-1-2 11:11:11', '2022-3-3 11:11:11')
+,(1, 3, 'MySql', '111', 9, 6, 2, '2022-3-3 11:11:11', '2022-3-1 11:11:11', '2022-3-3 11:11:11')
+,(1, 4, 'Java基础', '111', 30, 15, 2, '2022-3-8 11:11:11', '2022-3-7 11:11:11', '2022-3-8 11:11:11')
+,(1, 5, 'Java面试', '111', 25, 17, 2, '2022-3-9 11:11:11', '2022-3-7 11:11:11', '2022-3-9 11:11:11')
+,(1, 4, 'HTML', '111', 0, 0, 1, '2022-3-10 11:11:11', '2022-3-1 11:11:11', '2022-3-2 11:11:11')
+,(1, 5, 'CSS', '111', 12, 3, 2, '2022-3-15 11:11:11', '2022-3-12 11:11:11', '2022-3-15 11:11:11');
 
 
 insert into comment(article_id, user_id, content) values
