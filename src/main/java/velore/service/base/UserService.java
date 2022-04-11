@@ -1,12 +1,11 @@
 package velore.service.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.UserQueryBo;
 import velore.po.User;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
-
-import java.util.List;
 
 /**
  * @author Velore
@@ -77,22 +76,12 @@ public interface UserService extends IService<User> {
      * @param queryBo queryBo
      * @return user
      */
-    User queryByQueryBo(UserQueryBo queryBo);
+    IPage<User> queryByQueryBo(UserQueryBo queryBo);
 
     /**
-     * 通过名字模糊查询用户
-     *
-     * @param name name
-     * @return user list
+     * 用于注册或者登录
+     * @param queryBo queryBo
+     * @return user
      */
-    List<User> queryLikeName(String name);
-
-    /**
-     * 根据用户权限查询所有相同权限的用户
-     *
-     * @param type type
-     * @return user list
-     */
-    List<User> queryByUserType(int type);
-
+    User querySingletonByQueryBo(UserQueryBo queryBo);
 }

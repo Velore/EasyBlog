@@ -2,6 +2,7 @@ package velore.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import velore.po.Comment;
 
 /**
@@ -10,4 +11,6 @@ import velore.po.Comment;
  **/
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
+
+    int getTotal(@Param("id") Integer articleId);
 }

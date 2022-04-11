@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,14 @@ import java.time.LocalDateTime;
  * @author Velore
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
 @TableName("article")
 @ApiModel("文章")
 @Alias("Article")
-public class Article implements Comparable<Article>{
+public class Article extends ModifiedRecord implements Comparable<Article>{
 
     /**
      * blog id
@@ -83,10 +85,6 @@ public class Article implements Comparable<Article>{
      * 用于排序
      */
     private LocalDateTime publishTime;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 
     @Override
     public int compareTo(Article o) {

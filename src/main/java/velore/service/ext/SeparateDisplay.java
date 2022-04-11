@@ -1,5 +1,7 @@
 package velore.service.ext;
 
+import velore.bo.PageQueryBo;
+
 /**
  * 展示简要信息,展示具体信息
  * @author Velore
@@ -22,4 +24,13 @@ public interface SeparateDisplay<T> {
      * @return info
      */
     Object displayInfo(T t);
+
+    /**
+     * 返回可展示对象的具体信息
+     * 展示对象中存在需要分页查询的属性
+     * @param t t
+     * @param queryBo queryBo
+     * @return info
+     */
+    Object displayInfo(T t, PageQueryBo queryBo);
 }

@@ -1,7 +1,11 @@
 package velore.service.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import velore.bo.PageQueryBo;
 import velore.po.ArticleTag;
+import velore.po.Tag;
+import velore.vo.ArticleBrief;
 
 import java.util.List;
 
@@ -37,14 +41,15 @@ public interface ArticleTagService extends IService<ArticleTag> {
     /**
      * 根据文章id查询文章携带的标签
      * @param articleId articleId
-     * @return ArticleTag list
+     * @return Tag list
      */
-    List<ArticleTag> queryByArticleId(Integer articleId);
+    List<Tag> queryByArticleId(Integer articleId);
 
     /**
      * 根据标签id查询携带该标签的文章
      * @param tagId tagId
+     * @param queryBo queryBo
      * @return ArticleTag list
      */
-    List<ArticleTag> queryByTagId(Integer tagId);
+    IPage<ArticleBrief> queryByTagId(Integer tagId, PageQueryBo queryBo);
 }

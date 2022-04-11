@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
@@ -16,13 +17,14 @@ import java.time.LocalDateTime;
  * @date 2022/3/2
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
 @TableName("user")
 @ApiModel("用户")
 @Alias("User")
-public class User {
+public class User extends ModifiedRecord{
 
     /**
      * 数据库id
@@ -50,12 +52,6 @@ public class User {
      * 最后登录时间
      */
     private LocalDateTime lastLoginTime;
-    /**
-     * 注册时间
-     */
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 
     public User(UserLoginRequest request){
         userRegId = request.getIdentifier();

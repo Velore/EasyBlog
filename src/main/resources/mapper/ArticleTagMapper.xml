@@ -7,8 +7,8 @@
     <resultMap id="ArticleTagMap" type="ArticleTag">
     </resultMap>
 
-    <select id="getCount" resultType="Integer">
-        select count(easy_blog.article_tag.tag_id) from easy_blog.article_tag
+    <select id="getTotal" resultType="Integer">
+        select count(tag_id) from easy_blog.article_tag
     </select>
 
 </mapper>

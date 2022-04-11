@@ -4,9 +4,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
-import velore.constants.Constant;
+import velore.bo.PageQueryBo;
+import velore.constants.ReqConstant;
 import velore.po.ArticleTag;
+import velore.po.Tag;
 import velore.service.base.ArticleTagService;
+import velore.vo.PageResponse;
+import velore.vo.ArticleBrief;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -25,32 +29,38 @@ public class ArticleTagController {
     private ArticleTagService articleTagService;
 
     @ApiOperation("添加文章标签对应关系")
-    @PostMapping("/addArticleTag")
+    @PostMapping("/add")
     public Result<String> addArticleTag(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token,
+            @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody ArticleTag tag){
         articleTagService.add(token, tag);
         return Result.success();
     }
 
     @ApiOperation("删除文章标签对应关系")
-    @PostMapping("/deleteArticleTag/{id}")
+    @DeleteMapping("/delete")
     public Result<String> deleteArticleTag(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token,
-            @PathVariable Integer id){
+            @RequestHeader(ReqConstant.TOKEN_KEY) String token,
+            @RequestBody Integer id){
         articleTagService.delete(token, id);
         return Result.success();
     }
 
     @ApiOperation("根据文章id查询文章携带的标签")
-    @GetMapping("/queryArticleTagByArticleId/{id}")
-    public Result<List<ArticleTag>> queryArticleTagByArticleId(@PathVariable Integer id){
+    @GetMapping("/queryByArticleId")
+    public Result<List<Tag>> queryArticleTagByArticleId(
+            @RequestParam(ReqConstant.ARTICLE_ID_KEY) Integer id){
         return Result.success(articleTagService.queryByArticleId(id));
     }
 
     @ApiOperation("根据标签id查询携带该标签的文章")
-    @GetMapping("/queryLikeName/{tagId}")
-    public Result<List<ArticleTag>> queryArticleTagByTagId(@PathVariable Integer tagId){
-        return Result.success(articleTagService.queryByTagId(tagId));
+    @GetMapping("/queryLikeName/{currentPage}")
+    public Result<PageResponse<ArticleBrief>> queryArticleTagByTagId(
+            @RequestParam(ReqConstant.TAG_ID_KEY) Integer tagId,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false) Integer totalRecord,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @PathVariable Integer currentPage){
+        PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, totalRecord);
+        return Result.success(new PageResponse<>(articleTagService.queryByTagId(tagId, queryBo.validate())));
     }
 }

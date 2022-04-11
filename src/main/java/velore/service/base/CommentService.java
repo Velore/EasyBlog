@@ -1,5 +1,6 @@
 package velore.service.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.CommentQueryBo;
 import velore.po.Comment;
@@ -39,5 +40,5 @@ public interface CommentService extends IService<Comment> {
      * @param queryBo CommentQueryBo
      * @return Comment List
      */
-    List<Comment> queryAllByQueryBo(CommentQueryBo queryBo);
+    IPage<Comment> queryByQueryBo(CommentQueryBo queryBo);
 }

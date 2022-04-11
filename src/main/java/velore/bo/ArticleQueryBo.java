@@ -2,6 +2,7 @@ package velore.bo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,10 @@ import java.time.LocalDateTime;
  * @date 2022/3/16
  **/
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleQueryBo {
+public class ArticleQueryBo extends PageQueryBo{
 
     private Integer articleTypeId;
 

@@ -1,6 +1,8 @@
 package velore.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +15,6 @@ import velore.service.base.CommentService;
 import velore.utils.TokenUtil;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author Velore
@@ -52,14 +53,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public List<Comment> queryAllByQueryBo(CommentQueryBo queryBo) {
-        QueryWrapper<Comment> wrapper = new QueryWrapper<>();
-        if(queryBo.getArticleId()!=null){
-            wrapper.eq("article_id", queryBo.getArticleId());
+    public IPage<Comment> queryByQueryBo(CommentQueryBo queryBo) {
+        IPage<Comment> page = new Page<>(queryBo.currentPage, queryBo.pageSize, queryBo.getTotalRecord());
+        LambdaQueryChainWrapper<Comment> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
+        if(queryBo.getArticleId() != null){
+            wrapper.eq(Comment::getArticleId, queryBo.getArticleId());
         }
-        if(queryBo.getUserId()!=null){
-            wrapper.eq("user_id", queryBo.getUserId());
+        if(queryBo.getUserId() != null){
+            wrapper.eq(Comment::getUserId, queryBo.getUserId());
         }
-        return baseMapper.selectList(wrapper);
+        return baseMapper.selectPage(page, wrapper.getWrapper());
     }
 }

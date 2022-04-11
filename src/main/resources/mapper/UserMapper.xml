@@ -7,8 +7,12 @@
     <resultMap id="UserMap" type="User">
     </resultMap>
 
-    <select id="getCount" resultType="Integer">
-        select count(easy_blog.user.id) from easy_blog.user;
+    <select id="getTotalByUserType" parameterType="Integer">
+        select count(id) from easy_blog.user where user_type = #{type};
+    </select>
+
+    <select id="getTotalByName" parameterType="String">
+        select count(id) from easy_blog.user where user_type = #{name};
     </select>
 
 </mapper>

@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 @TableName("tag")
-@ApiModel("标签")
+@ApiModel(value = "标签")
 @Alias("Tag")
 public class Tag implements Comparable<Tag>{
 

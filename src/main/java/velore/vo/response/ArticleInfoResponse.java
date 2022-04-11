@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import velore.po.Article;
 import velore.po.Comment;
 import velore.po.Tag;
+import velore.po.User;
 
 import java.util.List;
 
@@ -22,12 +23,26 @@ public class ArticleInfoResponse {
 
     private Article article;
 
+    private Integer authorId;
     /**
      * username
      */
-    private String author;
+    private String authorName;
 
     private List<Tag> tags;
 
     private List<Comment> comments;
+
+    private void setAuthorId(Integer authorId){
+        this.authorId = authorId;
+    }
+
+    private void setAuthorName(String authorName){
+        this.authorName = authorName;
+    }
+
+    public void setAuthor(User user){
+        this.authorId = user.getId();
+        this.authorName = user.getUsername();
+    }
 }

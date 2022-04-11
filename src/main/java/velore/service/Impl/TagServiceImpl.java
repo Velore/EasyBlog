@@ -1,10 +1,13 @@
 package velore.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
+import velore.bo.TagQueryBo;
 import velore.dao.TagMapper;
 import velore.po.Tag;
 import velore.service.base.TagService;
@@ -26,8 +29,8 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     private TagService tagService;
 
     @Override
-    public int getCount() {
-        return baseMapper.getCount();
+    public int getTotal() {
+        return baseMapper.getTotal();
     }
 
     @Override
@@ -63,18 +66,13 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     }
 
     @Override
-    public List<Tag> queryAll() {
-        return baseMapper.selectList(new QueryWrapper<>());
-    }
-
-    @Override
     public Tag queryById(Integer id) {
         return baseMapper.selectById(id);
     }
 
     @Override
     public List<Tag> queryRandom(Integer num) {
-        int bound = tagService.getCount();
+        int bound = tagService.getTotal();
         if(bound < num){
             num = bound;
         }
@@ -84,7 +82,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
             int randomId = RandomUtil.randomInt(bound);
             if(idSet.add(randomId)){
                 Tag tag = tagService.queryById(randomId);
-                if(tag !=null ){
+                if(tag != null){
                     tagList.add(tag);
                     continue;
                 }
@@ -95,9 +93,10 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     }
 
     @Override
-    public List<Tag> queryLikeName(String tagName) {
-        QueryWrapper<Tag> wrapper = new QueryWrapper<>();
-        wrapper.like("name", tagName);
-        return baseMapper.selectList(wrapper);
+    public IPage<Tag> queryLikeName(TagQueryBo queryBo) {
+        IPage<Tag> page = queryBo.getPage();
+        LambdaQueryChainWrapper<Tag> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper)
+                .like(Tag::getName, queryBo.getTagName());
+        return baseMapper.selectPage(page, wrapper.getWrapper());
     }
 }

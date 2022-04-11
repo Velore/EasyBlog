@@ -1,5 +1,6 @@
 package velore.service.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import velore.bo.ArticleQueryBo;
 import velore.po.Article;
@@ -57,5 +58,5 @@ public interface ArticleService extends IService<Article>, Countable, ArticleOps
      * @param queryBo queryBo
      * @return list
      */
-    List<Article> queryByQueryBo(ArticleQueryBo queryBo);
+    IPage<Article> queryByQueryBo(ArticleQueryBo queryBo);
 }

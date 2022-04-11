@@ -1,22 +1,25 @@
 package velore.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
 import velore.bo.ArticleQueryBo;
 import velore.bo.CommentQueryBo;
+import velore.bo.PageQueryBo;
 import velore.constants.ArticleConstant;
 import velore.dao.ArticleMapper;
 import velore.exception.IllegalRequestException;
 import velore.exception.InvalidParamException;
 import velore.po.Article;
-import velore.po.ArticleTag;
-import velore.po.Tag;
-import velore.service.base.*;
+import velore.service.base.ArticleService;
+import velore.service.base.ArticleTagService;
+import velore.service.base.CommentService;
+import velore.service.base.UserService;
 import velore.utils.TokenUtil;
-import velore.vo.response.ArticleBriefResponse;
+import velore.vo.ArticleBrief;
 import velore.vo.response.ArticleInfoResponse;
 
 import javax.annotation.Resource;
@@ -40,14 +43,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private ArticleTagService articleTagService;
 
     @Resource
-    private TagService tagService;
-
-    @Resource
     private CommentService commentService;
 
     @Override
     public Object displayBrief(Article article) {
-        ArticleBriefResponse briefResponse = new ArticleBriefResponse();
+        ArticleBrief briefResponse = new ArticleBrief();
         briefResponse.setDependAttributes(article)
                 .setAuthor(userService.queryById(article.getUserId()));
         return briefResponse;
@@ -55,19 +55,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Object displayInfo(Article article) {
+        return null;
+    }
+
+    @Override
+    public Object displayInfo(Article article, PageQueryBo queryBo){
         ArticleInfoResponse infoResponse = new ArticleInfoResponse();
         infoResponse.setArticle(article);
-        infoResponse.setAuthor(userService.queryById(article.getUserId()).getUsername());
-        List<Tag> tags = new ArrayList<>();
-        List<ArticleTag> articleTags = articleTagService.queryByArticleId(article.getId());
-        for(ArticleTag articleTag : articleTags){
-            Tag tag = tagService.queryById(articleTag.getTagId());
-            if(tag != null){
-                tags.add(tag);
-            }
-        }
-        infoResponse.setTags(tags);
-        infoResponse.setComments(commentService.queryAllByQueryBo(new CommentQueryBo(article.getId(), null)));
+        infoResponse.setAuthor(userService.queryById(article.getUserId()));
+        infoResponse.setTags(articleTagService.queryByArticleId(article.getId()));
+        CommentQueryBo commentQueryBo = new CommentQueryBo(article.getId(), queryBo);
+        infoResponse.setComments(commentService.queryByQueryBo(commentQueryBo).getRecords());
         return infoResponse;
     }
 
@@ -180,8 +178,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public int getCount() {
-        return baseMapper.getCount();
+    public int getTotal() {
+        return baseMapper.getTotal();
     }
 
     @Override
@@ -220,7 +218,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public List<Article> queryRandom(Integer num) {
-        int bound = articleService.getCount();
+        int bound = articleService.getTotal();
         if(bound < num){
             num = bound;
         }
@@ -246,30 +244,31 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public List<Article> queryByQueryBo(ArticleQueryBo queryBo) {
-        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+    public IPage<Article> queryByQueryBo(ArticleQueryBo queryBo) {
+        IPage<Article> page = queryBo.getPage();
+        LambdaQueryChainWrapper<Article> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
         //默认不显示隐藏文章
-        wrapper.eq("visible", false);
+        wrapper.eq(Article::getVisible, false);
         if(queryBo.getArticleTypeId()!=null){
-            wrapper.eq("article_type", queryBo.getArticleTypeId());
+            wrapper.eq(Article::getArticleType, queryBo.getArticleTypeId());
         }
         if(queryBo.getUserId()!=null){
             //用户可查看自己的隐藏文章
-            wrapper.eq("visible", true);
-            wrapper.eq("user_id", queryBo.getUserId());
+            wrapper.eq(Article::getVisible, true);
+            wrapper.eq(Article::getUserId, queryBo.getUserId());
         }else{
             //否则只查询已发布文章
-            wrapper.eq("status", ArticleConstant.ARTICLE_STATUS_PUBLISHED);
+            wrapper.eq(Article::getStatus, ArticleConstant.ARTICLE_STATUS_PUBLISHED);
         }
         if(queryBo.getTitle()!=null){
-            wrapper.like("title", queryBo.getTitle());
+            wrapper.like(Article::getTitle, queryBo.getTitle());
         }
         if(queryBo.getPublishAfter()!=null){
-            wrapper.ge("publish_time", queryBo.getPublishAfter());
+            wrapper.ge(Article::getPublishTime, queryBo.getPublishAfter());
         }
         if(queryBo.getPublishBefore()!=null){
-            wrapper.le("publish_time", queryBo.getPublishAfter());
+            wrapper.le(Article::getPublishTime, queryBo.getPublishAfter());
         }
-        return baseMapper.selectList(wrapper);
+        return baseMapper.selectPage(page, wrapper.getWrapper());
     }
 }

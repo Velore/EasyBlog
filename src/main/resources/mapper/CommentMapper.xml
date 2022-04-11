@@ -4,4 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="velore.dao.CommentMapper">
 
+    <select id="getTotal" parameterType="Integer">
+        select count(id) from easy_blog.comment where article_id = #{id}
+    </select>
+
 </mapper>

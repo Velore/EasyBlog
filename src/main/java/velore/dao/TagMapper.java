@@ -11,5 +11,5 @@ import velore.po.Tag;
 @Mapper
 public interface TagMapper extends BaseMapper<Tag> {
 
-    int getCount();
+    int getTotal();
 }

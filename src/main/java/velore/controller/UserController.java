@@ -5,17 +5,17 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
 import result.ResultType;
-import velore.constants.Constant;
+import velore.bo.UserQueryBo;
+import velore.constants.ReqConstant;
 import velore.po.User;
-import velore.utils.TokenUtil;
 import velore.service.base.UserService;
+import velore.utils.TokenUtil;
+import velore.vo.PageResponse;
 import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
 import velore.vo.response.UserInfoResponse;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Velore
@@ -51,7 +51,7 @@ public class UserController {
 
     @ApiOperation("刷新token")
     @GetMapping("/refresh")
-    public Result<String> refresh(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
+    public Result<String> refresh(@RequestHeader(ReqConstant.TOKEN_KEY) String token){
         return Result.success(TokenUtil.refresh(token));
     }
 
@@ -62,64 +62,77 @@ public class UserController {
      */
     @ApiOperation("根据请求头中的token返回用户信息")
     @GetMapping("/getUserInfo")
-    public Result<UserInfoResponse> getUserInfo(@RequestHeader(Constant.TOKEN_HEADER_KEY) String token){
+    public Result<UserInfoResponse> getUserInfo(@RequestHeader(ReqConstant.TOKEN_KEY) String token){
         User user = userService.queryById(TokenUtil.getTokenId(token));
         return Result.success(new UserInfoResponse(user));
     }
 
     @ApiOperation("更新用户信息")
-    @PostMapping("/updateUser")
+    @PostMapping("/update")
     public Result<String> updateUser(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token,
+            @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody UserUpdateRequest updateRequest){
         userService.update(token, updateRequest);
         return Result.success();
     }
 
     @ApiOperation("封禁用户")
-    @GetMapping("/ban/{userId}")
+    @GetMapping("/ban")
     public Result<String> ban(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userId){
+            @RequestHeader(ReqConstant.TOKEN_KEY) String token,
+            @RequestParam(ReqConstant.USER_ID_KEY) Integer userId){
         userService.ban(token, userId);
         return Result.success();
     }
 
     @ApiOperation("解封用户")
-    @GetMapping("/permit/{userId}")
+    @GetMapping("/permit")
     public Result<String> permit(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userId){
+            @RequestHeader(ReqConstant.TOKEN_KEY) String token,
+            @RequestParam(ReqConstant.USER_ID_KEY) Integer userId){
         userService.permit(token, userId);
         return Result.success();
     }
 
-    @ApiOperation("根据名字模糊查询用户")
-    @GetMapping("/queryUserLikeName/{name}")
-    public Result<List<UserInfoResponse>> queryUserLikeName(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable String name){
+    @ApiOperation("根据限定条件查询用户")
+    @PostMapping("/queryByQueryBo")
+    public Result<PageResponse<User>> queryByQueryBo(
+            @RequestHeader(ReqConstant.TOKEN_KEY) String token,
+            @RequestBody UserQueryBo queryBo){
         if(!TokenUtil.isAdmin(token)){
             return Result.fail(ResultType.NO_PERMIT);
         }
-        List<User> users = userService.queryLikeName(name);
-        List<UserInfoResponse> userInfoResponses = new ArrayList<>();
-        for(User u : users){
-            userInfoResponses.add(new UserInfoResponse(u));
-        }
-        return Result.success(userInfoResponses);
+        return Result.success(new PageResponse<>(userService.queryByQueryBo((UserQueryBo)queryBo.validate())));
     }
 
-    @ApiOperation("根据用户权限查询所有相同权限的用户")
-    @GetMapping("/queryUserByUserType/{userType}")
-    public Result<List<UserInfoResponse>> queryUserByUserType(
-            @RequestHeader(Constant.TOKEN_HEADER_KEY) String token, @PathVariable Integer userType){
-        if(!TokenUtil.isAdmin(token)){
-            return Result.fail(ResultType.NO_PERMIT);
-        }
-        List<User> users = userService.queryByUserType(userType);
-        List<UserInfoResponse> userInfoResponses = new ArrayList<>();
-        for(User u : users){
-            userInfoResponses.add(new UserInfoResponse(u));
-        }
-        return Result.success(userInfoResponses);
-    }
+//    @ApiOperation("根据名字模糊查询用户")
+//    @GetMapping("/queryUserLikeName/{name}")
+//    public Result<List<UserInfoResponse>> queryUserLikeName(
+//            @RequestHeader(ReqConstant.TOKEN) String token, @PathVariable String name){
+//        if(!TokenUtil.isAdmin(token)){
+//            return Result.fail(ResultType.NO_PERMIT);
+//        }
+//        List<User> users = userService.queryLikeName(name);
+//        List<UserInfoResponse> userInfoResponses = new ArrayList<>();
+//        for(User u : users){
+//            userInfoResponses.add(new UserInfoResponse(u));
+//        }
+//        return Result.success(userInfoResponses);
+//    }
+//
+//    @ApiOperation("根据用户权限查询所有相同权限的用户")
+//    @GetMapping("/queryUserByUserType/{userType}")
+//    public Result<List<UserInfoResponse>> queryUserByUserType(
+//            @RequestHeader(ReqConstant.TOKEN) String token, @PathVariable Integer userType){
+//        if(!TokenUtil.isAdmin(token)){
+//            return Result.fail(ResultType.NO_PERMIT);
+//        }
+//        List<User> users = userService.queryByUserType(userType);
+//        List<UserInfoResponse> userInfoResponses = new ArrayList<>();
+//        for(User u : users){
+//            userInfoResponses.add(new UserInfoResponse(u));
+//        }
+//        return Result.success(userInfoResponses);
+//    }
 
 }

@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Component
 @TableName("comment")
-@ApiModel("评论")
+@ApiModel(value = "评论",description = "评论模块依赖于文章模块(Article)，因此不再维护评论的查询接口")
 @Alias("Comment")
 public class Comment {
 

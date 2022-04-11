@@ -1,11 +1,15 @@
 package velore.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
+import velore.bo.PageQueryBo;
+import velore.constants.ReqConstant;
 import velore.po.ArticleType;
 import velore.service.base.ArticleTypeService;
+import velore.vo.PageResponse;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -25,36 +29,41 @@ public class ArticleTypeController {
     private ArticleTypeService articleTypeService;
 
     @ApiOperation("添加文章类型")
-    @PostMapping("/addArticleType")
+    @PostMapping("/add")
     public Result<String> addArticleType(@RequestBody ArticleType type){
         articleTypeService.add(type);
         return Result.success();
     }
 
     @ApiOperation("更新文章类型")
-    @PostMapping("/updateArticleType")
+    @PostMapping("/update")
     public Result<String> updateArticleType(@RequestBody ArticleType type){
         articleTypeService.update(type);
         return Result.success();
     }
 
     @ApiOperation("删除文章类型")
-    @PostMapping("/deleteArticleType/{id}")
-    public Result<String> deleteArticleType(@PathVariable Integer id){
+    @DeleteMapping("/delete")
+    public Result<String> deleteArticleType(@RequestBody Integer id){
         articleTypeService.delete(id);
         return Result.success();
     }
 
     @ApiOperation("根据id查询文章类型")
-    @GetMapping("/queryArticleTypeById/{id}")
-    public Result<ArticleType> queryArticleTypeById(@PathVariable Integer id){
+    @GetMapping("/queryById")
+    public Result<ArticleType> queryById(@RequestParam(ReqConstant.ARTICLE_ID_KEY) Integer id){
         return Result.success(articleTypeService.queryById(id));
     }
 
     @ApiOperation("查询全部文章类型")
-    @GetMapping("/query")
-    public Result<List<ArticleType>> queryAll(){
-        return Result.success(articleTypeService.queryAll());
+    @GetMapping("/queryAll/{currentPage}")
+    public Result<PageResponse<ArticleType>> queryAll(
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false) Integer total,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @PathVariable Integer currentPage){
+        PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, total);
+        IPage<ArticleType> page = articleTypeService.queryAll(queryBo.validate());
+        return Result.success(new PageResponse<>(page));
     }
 
     @ApiOperation("查询指定数量的随机文章类型")
@@ -64,8 +73,13 @@ public class ArticleTypeController {
     }
 
     @ApiOperation("根据名字模糊查询文章类型")
-    @GetMapping("/queryLikeName/{name}")
-    public Result<List<ArticleType>> queryLikeName(@PathVariable String name){
-        return Result.success(articleTypeService.queryLikeName(name));
+    @GetMapping("/queryLikeName/{currentPage}")
+    public Result<PageResponse<ArticleType>> queryLikeName(
+            @RequestParam("articleName") String name,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false) Integer totalRecord,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @PathVariable Integer currentPage){
+        PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, totalRecord);
+        return Result.success(new PageResponse<>(articleTypeService.queryLikeName(name, queryBo.validate())));
     }
 }

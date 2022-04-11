@@ -1,15 +1,22 @@
 package velore.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import velore.bo.PageQueryBo;
 import velore.dao.ArticleTagMapper;
 import velore.po.ArticleTag;
+import velore.po.Tag;
+import velore.service.base.ArticleService;
 import velore.service.base.ArticleTagService;
 import velore.service.base.TagService;
+import velore.vo.ArticleBrief;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +32,9 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
 
     @Resource
     private TagService tagService;
+
+    @Resource
+    private ArticleService articleService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -46,16 +56,35 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
     }
 
     @Override
-    public List<ArticleTag> queryByArticleId(Integer id) {
+    public List<Tag> queryByArticleId(Integer id) {
         QueryWrapper<ArticleTag> wrapper = new QueryWrapper<>();
         wrapper.eq("article_id", id);
-        return baseMapper.selectList(wrapper);
+        List<Tag> tags = new ArrayList<>();
+        List<ArticleTag> articleTags = baseMapper.selectList(wrapper);
+        for(ArticleTag articleTag : articleTags){
+            Tag tag = tagService.queryById(articleTag.getTagId());
+            if(tag != null){
+                tags.add(tag);
+            }
+        }
+        return tags;
     }
 
     @Override
-    public List<ArticleTag> queryByTagId(Integer id) {
-        QueryWrapper<ArticleTag> wrapper = new QueryWrapper<>();
-        wrapper.eq("tag_id", id);
-        return baseMapper.selectList(wrapper);
+    public IPage<ArticleBrief> queryByTagId(Integer id, PageQueryBo queryBo) {
+        IPage<ArticleTag> page = queryBo.getPage();
+        page = baseMapper.selectPage(page, new LambdaQueryChainWrapper<>(this.baseMapper)
+                .eq(ArticleTag::getTagId, id).getWrapper());
+        List<ArticleBrief> articles = new ArrayList<>();
+        for(ArticleTag articleTag : page.getRecords()){
+            //获取每一篇文章的Brief
+            ArticleBrief article = (ArticleBrief) articleService.displayBrief(
+                    articleService.queryById(articleTag.getArticleId())
+            );
+            if(article != null){
+                articles.add(article);
+            }
+        }
+        return queryBo.getPage(articles);
     }
 }

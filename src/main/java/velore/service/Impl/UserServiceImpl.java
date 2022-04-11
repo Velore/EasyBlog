@@ -1,11 +1,15 @@
 package velore.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.Md5Util;
 import velore.bo.UserQueryBo;
+import velore.constants.ReqConstant;
 import velore.dao.UserMapper;
 import velore.exception.InvalidParamException;
 import velore.po.User;
@@ -16,7 +20,6 @@ import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author Velore
@@ -31,8 +34,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int register(UserLoginRequest loginRequest) {
-        if(userService.queryByQueryBo(
-                new UserQueryBo(loginRequest.getIdentifier(), null, null)) != null){
+        if(userService.querySingletonByQueryBo(
+                new UserQueryBo(loginRequest.getIdentifier())) != null){
             throw new InvalidParamException("当前userId已被使用");
         }
         return baseMapper.insert(new User(loginRequest));
@@ -44,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 loginRequest.getIdentifier(),
                 loginRequest.getIdentifier(),
                 loginRequest.getIdentifier());
-        User user = userService.queryByQueryBo(queryBo);
+        User user = userService.querySingletonByQueryBo(queryBo);
         if(user == null){
             throw new InvalidParamException("帐号不存在");
         }
@@ -132,42 +135,58 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User queryByQueryBo(UserQueryBo queryBo) {
+    public IPage<User> queryByQueryBo(UserQueryBo queryBo) {
+        Integer size = queryBo.getPageSize();
+        if(size == -1){
+            size = ReqConstant.PAGE_SIZE;
+        }
+        boolean hasTotal = (queryBo.getTotalRecord() == -1);
+        IPage<User> userPage = new Page<>(queryBo.getCurrentPage(), size, queryBo.getTotalRecord(), hasTotal);
+        LambdaQueryChainWrapper<User> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
+        if(queryBo.getName()!=null){
+            wrapper.like(User::getUsername, queryBo.getName());
+        }
+        if(queryBo.getUserType()!=null){
+            wrapper.eq(User::getUserType, queryBo.getUserType());
+        }else{
+            wrapper.eq(false, User::getUserType, -1);
+        }
+        //此处不能直接使用LambdaQueryChainWrapper,需要获取其内部的wrapper
+//        return baseMapper.selectPage(userPage, wrapper);
+        return baseMapper.selectPage(userPage, wrapper.getWrapper());
+    }
+
+    @Override
+    public User querySingletonByQueryBo(UserQueryBo queryBo){
         User user;
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
         if(queryBo.getUserRegId()!=null){
-            wrapper.eq("user_reg_id", queryBo.getUserRegId());
-            user = baseMapper.selectOne(wrapper);
+            user = queryByUserRegId(queryBo.getUserRegId());
             if(user!=null){
                 return user;
             }
         }
         if(queryBo.getPhone()!=null){
-            wrapper.eq("phone", queryBo.getPhone());
-            user = baseMapper.selectOne(wrapper);
+            user = queryByPhone(queryBo.getPhone());
             if(user!=null){
                 return user;
             }
         }
         if(queryBo.getEmail()!=null){
-            wrapper.eq("email", queryBo.getEmail());
-            user = baseMapper.selectOne(wrapper);
+            user = queryByEmail(queryBo.getEmail());
             return user;
         }
         return null;
     }
 
-    @Override
-    public List<User> queryLikeName(String name) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like("user_name", name).eq(false, "user_type", -1);
-        return baseMapper.selectList(wrapper);
+    private User queryByUserRegId(String regId){
+        return baseMapper.selectOne(new QueryWrapper<User>().eq("user_reg_id", regId));
     }
 
-    @Override
-    public List<User> queryByUserType(int type) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_type", type);
-        return baseMapper.selectList(wrapper);
+    private User queryByPhone(String phone){
+        return baseMapper.selectOne(new QueryWrapper<User>().eq("phone", phone));
+    }
+
+    private User queryByEmail(String email){
+        return baseMapper.selectOne(new QueryWrapper<User>().eq("email", email));
     }
 }

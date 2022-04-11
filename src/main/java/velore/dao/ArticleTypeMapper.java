@@ -11,5 +11,5 @@ import velore.po.ArticleType;
 @Mapper
 public interface ArticleTypeMapper extends BaseMapper<ArticleType> {
 
-    int getCount();
+    int getTotal();
 }

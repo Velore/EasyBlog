@@ -9,8 +9,6 @@ import java.util.Set;
  **/
 public class Constant {
 
-    public static final String TOKEN_HEADER_KEY = "token";
-
     public static final Set<Integer> ADMIN_ID_SET = new HashSet<>();
 
     static {

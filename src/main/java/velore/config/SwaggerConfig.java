@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * swagger接口管理 配置
  * @author Velore
  * @date 2022/3/2
  **/

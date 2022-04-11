@@ -1,10 +1,13 @@
 package velore.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RandomUtil;
+import velore.bo.PageQueryBo;
 import velore.dao.ArticleTypeMapper;
 import velore.po.ArticleType;
 import velore.service.base.ArticleTypeService;
@@ -27,8 +30,8 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
     private ArticleTypeService articleTypeService;
 
     @Override
-    public int getCount() {
-        return baseMapper.getCount();
+    public int getTotal() {
+        return baseMapper.getTotal();
     }
 
     @Override
@@ -55,13 +58,18 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
     }
 
     @Override
-    public List<ArticleType> queryAll() {
-        return baseMapper.selectList(new QueryWrapper<>());
+    public IPage<ArticleType> queryAll(PageQueryBo queryBo) {
+        IPage<ArticleType> page = Page.of(
+                queryBo.getCurrentPage(),
+                queryBo.getPageSize(),
+                queryBo.getTotalRecord(),
+                queryBo.getTotalRecord() == 0);
+        return baseMapper.selectPage(page, new LambdaQueryChainWrapper<>(this.baseMapper).getWrapper());
     }
 
     @Override
     public List<ArticleType> queryRandom(int num) {
-        int bound = articleTypeService.getCount();
+        int bound = articleTypeService.getTotal();
         if(bound < num){
             num = bound;
         }
@@ -82,9 +90,14 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
     }
 
     @Override
-    public List<ArticleType> queryLikeName(String name) {
-        QueryWrapper<ArticleType> wrapper = new QueryWrapper<>();
-        wrapper.like("name", name);
-        return baseMapper.selectList(wrapper);
+    public IPage<ArticleType> queryLikeName(String name, PageQueryBo queryBo) {
+        IPage<ArticleType> page = Page.of(
+                queryBo.getCurrentPage(),
+                queryBo.getPageSize(),
+                queryBo.getTotalRecord(),
+                queryBo.getTotalRecord() == 0);
+        LambdaQueryChainWrapper<ArticleType> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper)
+                .like(ArticleType::getName, name);
+        return baseMapper.selectPage(page, wrapper.getWrapper());
     }
 }

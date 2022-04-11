@@ -1,6 +1,8 @@
 package velore.service.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import velore.bo.PageQueryBo;
 import velore.po.ArticleType;
 import velore.service.ext.Countable;
 
@@ -42,9 +44,10 @@ public interface ArticleTypeService extends IService<ArticleType>, Countable {
 
     /**
      * 查询全部
+     * @param queryBo queryBo
      * @return ArticleType list
      */
-    List<ArticleType> queryAll();
+    IPage<ArticleType> queryAll(PageQueryBo queryBo);
 
     /**
      * 随机获取指定数量
@@ -56,7 +59,8 @@ public interface ArticleTypeService extends IService<ArticleType>, Countable {
     /**
      * 通过名字模糊查询
      * @param name name
+     * @param queryBo queryBo
      * @return ArticleType list
      */
-    List<ArticleType> queryLikeName(String name);
+    IPage<ArticleType> queryLikeName(String name, PageQueryBo queryBo);
 }

@@ -1,6 +1,8 @@
 package velore.service.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import velore.bo.TagQueryBo;
 import velore.po.Tag;
 import velore.service.ext.Countable;
 
@@ -48,12 +50,6 @@ public interface TagService extends IService<Tag>, Countable {
     int delete(Integer tagId);
 
     /**
-     * 查询全部标签
-     * @return tag list
-     */
-    List<Tag> queryAll();
-
-    /**
      * 通过id查询标签
      * @param id id
      * @return tag
@@ -68,9 +64,9 @@ public interface TagService extends IService<Tag>, Countable {
     List<Tag> queryRandom(Integer num);
 
     /**
-     * 通过标签名查询标签
-     * @param tagName tagName
+     * 通过限定条件查询
+     * @param queryBo queryBo
      * @return tag list
      */
-    List<Tag> queryLikeName(String tagName);
+    IPage<Tag> queryLikeName(TagQueryBo queryBo);
 }
