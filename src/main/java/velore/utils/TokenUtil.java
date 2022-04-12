@@ -162,7 +162,7 @@ public class TokenUtil {
      * 用于获取登录用户的类型
      * 不验证token,直接获取token中的userType
      * @param token token
-     * @return user type ( 0 , 1 )
+     * @return po.UserType.value
      */
     public static int getTokenAuth(String token){
         if(StringUtils.isEmpty(token)) {

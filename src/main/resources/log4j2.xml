@@ -211,7 +211,7 @@
 <!--        mybatis-plus日志-->
         <Logger name="com.baomidou.mybatisplus" level="info" additivity="false"/>
 <!--        忽略swagger的日志-->
-        <Logger name="springfox.documentation.spring.web" level="error" additivity="false"/>
+        <Logger name="springfox.documentation" level="error" additivity="false"/>
 
         <Logger name="velore.aspect" level="info" additivity="false"/>
         <!-- 根日志设置 -->

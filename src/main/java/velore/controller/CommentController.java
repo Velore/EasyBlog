@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.constants.ReqConstant;
-import velore.po.Comment;
 import velore.service.base.CommentService;
 import velore.vo.request.CommentRequest;
 
@@ -29,7 +28,7 @@ public class CommentController {
     public Result<String> publish(
             @RequestHeader(ReqConstant.TOKEN_KEY)String token,
             @RequestBody CommentRequest request){
-        commentService.add(new Comment(token, request));
+        commentService.add(request.getComment(token));
         return Result.success();
     }
 

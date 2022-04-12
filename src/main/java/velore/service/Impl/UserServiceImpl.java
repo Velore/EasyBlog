@@ -3,13 +3,11 @@ package velore.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.Md5Util;
 import velore.bo.UserQueryBo;
-import velore.constants.ReqConstant;
 import velore.dao.UserMapper;
 import velore.exception.InvalidParamException;
 import velore.po.User;
@@ -38,7 +36,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 new UserQueryBo(loginRequest.getIdentifier())) != null){
             throw new InvalidParamException("当前userId已被使用");
         }
-        return baseMapper.insert(new User(loginRequest));
+        return baseMapper.insert(loginRequest.getUser());
     }
 
     @Override
@@ -62,11 +60,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public int update(String token, UserUpdateRequest updateRequest) {
         int tokenId = TokenUtil.getTokenId(token);
         User user;
-        //token不为空
-        if(token != null){
-            user = userService.queryById(tokenId);
-        }else {
-            user = userService.queryById(updateRequest.getId());
+        switch (TokenUtil.getTokenAuth(token)){
+            //管理员
+            case 1:
+                Integer reqId = updateRequest.getId();
+                user = userService.queryById((reqId == null)?tokenId:reqId);
+                break;
+            //普通用户和封禁用户
+            case 2:
+            case 3:
+                user = userService.queryById(tokenId);
+                break;
+            default:
+                throw new InvalidParamException("用户状态异常,可能已删除");
         }
         if(user == null){
             throw new InvalidParamException("用户不存在");
@@ -74,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         updateAttributes(user, updateRequest);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         //更新密码可以选择另外多写一个方法，但是这里为了方便，设置所有属性都可以一起更新
-        wrapper.eq("id", TokenUtil.getTokenId(token));
+        wrapper.eq("id", user.getId());
         return baseMapper.update(user, wrapper);
     }
 
@@ -84,11 +90,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param updateRequest updateRequest
      */
     private void updateAttributes(User user, UserUpdateRequest updateRequest){
-        user.setPhone(updateRequest.getPhone());
-        user.setEmail(updateRequest.getEmail());
-        user.setUsername(updateRequest.getUsername());
-        user.setPassword(Md5Util.encrypt(updateRequest.getPassword()));
-        user.setAvatar(updateRequest.getAvatar());
+        if(updateRequest.getPhone()!=null){
+            user.setPhone(updateRequest.getPhone());
+        }
+        if(updateRequest.getEmail()!=null){
+            user.setEmail(updateRequest.getEmail());
+        }
+        if(updateRequest.getUsername() !=null){
+            user.setUsername(updateRequest.getUsername());
+        }
+        if(updateRequest.getPassword() !=null){
+            user.setPassword(Md5Util.encrypt(updateRequest.getPassword()));
+        }
+        if(updateRequest.getAvatar() !=null){
+            user.setAvatar(updateRequest.getAvatar());
+        }
     }
 
     @Override
@@ -136,12 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public IPage<User> queryByQueryBo(UserQueryBo queryBo) {
-        Integer size = queryBo.getPageSize();
-        if(size == -1){
-            size = ReqConstant.PAGE_SIZE;
-        }
-        boolean hasTotal = (queryBo.getTotalRecord() == -1);
-        IPage<User> userPage = new Page<>(queryBo.getCurrentPage(), size, queryBo.getTotalRecord(), hasTotal);
+        IPage<User> userPage = queryBo.getPage();
         LambdaQueryChainWrapper<User> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
         if(queryBo.getName()!=null){
             wrapper.like(User::getUsername, queryBo.getName());
@@ -151,8 +162,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }else{
             wrapper.eq(false, User::getUserType, -1);
         }
-        //此处不能直接使用LambdaQueryChainWrapper,需要获取其内部的wrapper
-//        return baseMapper.selectPage(userPage, wrapper);
         return baseMapper.selectPage(userPage, wrapper.getWrapper());
     }
 

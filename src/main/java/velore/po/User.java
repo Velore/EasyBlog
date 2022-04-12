@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
+import utils.Md5Util;
 import velore.vo.request.UserLoginRequest;
 
 import java.time.LocalDateTime;
@@ -17,14 +18,13 @@ import java.time.LocalDateTime;
  * @date 2022/3/2
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
 @TableName("user")
 @ApiModel("用户")
 @Alias("User")
-public class User extends ModifiedRecord{
+public class User{
 
     /**
      * 数据库id
@@ -53,8 +53,11 @@ public class User extends ModifiedRecord{
      */
     private LocalDateTime lastLoginTime;
 
-    public User(UserLoginRequest request){
-        userRegId = request.getIdentifier();
-        password = request.getPassword();
-    }
+    @DateTimeFormat
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @DateTimeFormat
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
 }

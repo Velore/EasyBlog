@@ -1,6 +1,5 @@
 package velore.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,6 +16,7 @@ import velore.utils.CastUtil;
 import velore.vo.ArticleBrief;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,14 +39,14 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int add(String token, ArticleTag articleTag) {
+    public int add(ArticleTag articleTag) {
         tagService.increase(articleTag.getTagId());
         return baseMapper.insert(articleTag);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(String token, Integer id) {
+    public int delete(Integer id) {
         tagService.decrease(articleTagService.queryById(id).getTagId());
         return baseMapper.deleteById(id);
     }
@@ -58,10 +58,13 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
 
     @Override
     public List<Tag> queryByArticleId(Integer id) {
-        QueryWrapper<ArticleTag> wrapper = new QueryWrapper<>();
-        wrapper.eq("article_id", id);
-        List<Integer> tagIds = baseMapper.selectList(wrapper).stream()
+        LambdaQueryChainWrapper<ArticleTag> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
+        List<Integer> tagIds = baseMapper.selectList(
+                wrapper.eq(ArticleTag::getArticleId, id).getWrapper()).stream()
                 .map(ArticleTag::getTagId).collect(Collectors.toList());
+        if(tagIds.isEmpty()){
+            return new ArrayList<>();
+        }
         return tagService.getBaseMapper().selectBatchIds(tagIds);
     }
 

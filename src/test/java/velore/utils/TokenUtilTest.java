@@ -1,7 +1,6 @@
 package velore.utils;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import velore.po.User;
 import velore.po.UserType;
 
@@ -9,7 +8,6 @@ import velore.po.UserType;
  * @author Velore
  * @date 2022/3/3
  **/
-@SpringBootTest
 public class TokenUtilTest {
 
     @Test

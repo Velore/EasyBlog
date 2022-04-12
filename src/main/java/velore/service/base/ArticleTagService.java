@@ -17,19 +17,17 @@ public interface ArticleTagService extends IService<ArticleTag> {
 
     /**
      * 添加文章标签对应关系
-     * @param token token
      * @param articleTag articleTag
      * @return int
      */
-    int add(String token, ArticleTag articleTag);
+    int add(ArticleTag articleTag);
 
     /**
      * 删除文章标签对应关系
-     * @param token token
      * @param id id
      * @return int
      */
-    int delete(String token, Integer id);
+    int delete(Integer id);
 
     /**
      * 根据id查询

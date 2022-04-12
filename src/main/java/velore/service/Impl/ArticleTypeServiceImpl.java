@@ -75,11 +75,7 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
 
     @Override
     public IPage<ArticleType> queryLikeName(String name, PageQueryBo queryBo) {
-        IPage<ArticleType> page = Page.of(
-                queryBo.getCurrentPage(),
-                queryBo.getPageSize(),
-                queryBo.getTotalRecord(),
-                queryBo.getTotalRecord() == 0);
+        IPage<ArticleType> page = queryBo.getPage();
         LambdaQueryChainWrapper<ArticleType> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper)
                 .like(ArticleType::getName, name);
         return baseMapper.selectPage(page, wrapper.getWrapper());

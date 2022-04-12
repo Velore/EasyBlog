@@ -1,16 +1,12 @@
 package velore.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
-import velore.utils.TokenUtil;
-import velore.vo.request.CommentRequest;
 
 import java.time.LocalDateTime;
 
@@ -51,11 +47,8 @@ public class Comment {
     /**
      * 发送时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    public Comment(String token, CommentRequest request){
-        articleId = request.getArticleId();
-        userId = TokenUtil.getTokenId(token);
-        content = request.getContent();
-    }
+
 }

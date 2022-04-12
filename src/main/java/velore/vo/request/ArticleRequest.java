@@ -1,18 +1,18 @@
 package velore.vo.request;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import velore.po.Article;
+import velore.utils.TokenUtil;
 
 /**
  * @author Velore
- * @date 2022/4/2
+ * @date 2022/4/12
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("文章Request")
 public class ArticleRequest {
 
     private Integer id;
@@ -26,4 +26,15 @@ public class ArticleRequest {
     private Boolean visible;
 
     private Boolean commentable;
+
+    public Article getArticle(String token){
+        Article article = new Article();
+        article.setArticleType(articleType);
+        article.setUserId(TokenUtil.getTokenId(token));
+        article.setTitle(title);
+        article.setContent(content);
+        article.setVisible(visible);
+        article.setCommentable(commentable);
+        return article;
+    }
 }

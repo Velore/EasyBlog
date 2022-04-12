@@ -16,9 +16,9 @@ import result.ResultType;
 public class GlobalExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(Exception.class)
-    public Result<String> handleException(Exception e) {
-        String brief = e.getMessage();
+    @ExceptionHandler(Throwable.class)
+    public Result<String> handleThrowable(Throwable e) {
+        String brief = e.fillInStackTrace().toString();
         String details = e.toString();
         if (brief == null || "".equals(brief)) {
             return Result.fail(ResultType.SYSTEM_ERROR, details);

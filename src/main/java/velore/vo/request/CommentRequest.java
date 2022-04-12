@@ -1,9 +1,10 @@
 package velore.vo.request;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import velore.po.Comment;
+import velore.utils.TokenUtil;
 
 /**
  * @author Velore
@@ -12,10 +13,18 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("评论Request")
 public class CommentRequest {
 
     private Integer articleId;
 
     private String content;
+
+    public Comment getComment(String token){
+        Comment comment = new Comment();
+        comment.setId(null);
+        comment.setArticleId(articleId);
+        comment.setUserId(TokenUtil.getTokenId(token));
+        comment.setContent(content);
+        return comment;
+    }
 }

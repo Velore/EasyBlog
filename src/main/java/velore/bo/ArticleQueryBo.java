@@ -32,12 +32,4 @@ public class ArticleQueryBo extends PageQueryBo{
      * 最晚的发布时间
      */
     private LocalDateTime publishBefore;
-
-    @Override
-    public ArticleQueryBo validate(){
-        PageQueryBo.validate(this);
-        assert articleTypeId != null && articleTypeId <= 0 : "id 不能为负数";
-        assert userId != null && userId < 0 : "id 不能为负数";
-        return this;
-    }
 }

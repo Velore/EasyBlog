@@ -58,8 +58,8 @@ public class ArticleTypeController {
     @ApiOperation("查询全部文章类型")
     @GetMapping("/queryAll/{currentPage}")
     public Result<PageResponse<ArticleType>> queryAll(
-            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false) Integer total,
-            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0") Integer total,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer pageSize,
             @PathVariable Integer currentPage){
         PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, total);
         IPage<ArticleType> page = articleTypeService.queryAll(queryBo.validate());
@@ -76,8 +76,8 @@ public class ArticleTypeController {
     @GetMapping("/queryLikeName/{currentPage}")
     public Result<PageResponse<ArticleType>> queryLikeName(
             @RequestParam("articleName") String name,
-            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false) Integer totalRecord,
-            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0") Integer totalRecord,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer pageSize,
             @PathVariable Integer currentPage){
         PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, totalRecord);
         return Result.success(new PageResponse<>(articleTypeService.queryLikeName(name, queryBo.validate())));

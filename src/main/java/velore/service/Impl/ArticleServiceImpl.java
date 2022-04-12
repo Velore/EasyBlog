@@ -249,18 +249,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         IPage<Article> page = queryBo.getPage();
         LambdaQueryChainWrapper<Article> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
         //默认不显示隐藏文章
-        wrapper.eq(Article::getVisible, false);
+        boolean isVisible = false;
         if(queryBo.getArticleTypeId()!=null){
             wrapper.eq(Article::getArticleType, queryBo.getArticleTypeId());
         }
         if(queryBo.getUserId()!=null){
             //用户可查看自己的隐藏文章
-            wrapper.eq(Article::getVisible, true);
+            isVisible = true;
             wrapper.eq(Article::getUserId, queryBo.getUserId());
         }else{
             //否则只查询已发布文章
             wrapper.eq(Article::getStatus, ArticleConstant.ARTICLE_STATUS_PUBLISHED);
         }
+        wrapper.eq(Article::getVisible, isVisible);
         if(queryBo.getTitle()!=null){
             wrapper.like(Article::getTitle, queryBo.getTitle());
         }

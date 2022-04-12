@@ -20,7 +20,9 @@ public interface SeparateDisplay<T> {
     Object displayBrief(T t);
 
     /**
-     * 一次返回多个Brief
+     * 一次返回多个Brief<br/>
+     * 使用selectBatch一次查询多条,速度更快<br/>
+     * 如果不能保证返回的一定是brief list,则不建议使用该方法
      * @param list Object list
      * @return (Object)brief list
      */

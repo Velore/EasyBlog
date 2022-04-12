@@ -11,9 +11,10 @@ import velore.constants.ReqConstant;
 import velore.po.Article;
 import velore.service.base.ArticleService;
 import velore.service.Impl.ArticleServiceImpl;
+import velore.utils.CastUtil;
 import velore.vo.PageResponse;
-import velore.vo.request.ArticleRequest;
 import velore.vo.ArticleBrief;
+import velore.vo.request.ArticleRequest;
 import velore.vo.response.ArticleInfoResponse;
 
 import javax.annotation.Resource;
@@ -40,7 +41,7 @@ public class ArticleController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody ArticleRequest request){
         ArticleServiceImpl service = (ArticleServiceImpl)articleService;
-        service.draft(new Article(token, request));
+        service.draft(request.getArticle(token));
         return Result.success();
     }
 
@@ -50,7 +51,7 @@ public class ArticleController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody ArticleRequest request){
         ArticleServiceImpl service = (ArticleServiceImpl)articleService;
-        service.publish(new Article(token, request));
+        service.publish(request.getArticle(token));
         return Result.success();
     }
 
@@ -83,8 +84,8 @@ public class ArticleController {
     @GetMapping("/queryById/{currentPage}")
     public Result<ArticleInfoResponse> queryArticleById(
             @RequestParam(ReqConstant.ARTICLE_ID_KEY) Integer id,
-            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false)Integer total,
-            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0")Integer total,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer pageSize,
             @PathVariable Integer currentPage){
         PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, total);
         ArticleInfoResponse response = (ArticleInfoResponse) articleService.displayInfo(
@@ -108,14 +109,11 @@ public class ArticleController {
     public Result<PageResponse<ArticleBrief>> queryArticleByQueryBo(
             @RequestBody ArticleQueryBo queryBo){
         //分页查询的条件page
-        IPage<Article> articles = articleService.queryByQueryBo(queryBo);
-        PageResponse<ArticleBrief> response = new PageResponse<>(
-                queryBo.getCurrentPage(), queryBo.getPageSize(), queryBo.getTotalRecord()
-        );
+        IPage<Article> articles = articleService.queryByQueryBo((ArticleQueryBo) queryBo.validate());
+        PageResponse<ArticleBrief> response = new PageResponse<>(queryBo);
         //添加分页数据
-        for(Article article : articles.getRecords()){
-            response.addRecord((ArticleBrief) articleService.displayBrief(article));
-        }
+        response.setData(CastUtil.cast(
+                articleService.displayBrief(articles.getRecords()), ArticleBrief.class));
         return Result.success(response);
     }
 }

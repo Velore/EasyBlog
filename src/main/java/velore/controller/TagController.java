@@ -11,6 +11,7 @@ import velore.constants.ReqConstant;
 import velore.po.Tag;
 import velore.service.base.TagService;
 import velore.vo.PageResponse;
+import velore.vo.request.TagRequest;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -30,15 +31,15 @@ public class TagController {
 
     @ApiOperation("新增标签")
     @PutMapping("/add")
-    public Result<String> addTag(@RequestBody Tag tag){
-        tagService.add(tag);
+    public Result<String> addTag(@RequestBody TagRequest request){
+        tagService.add(request.getTag());
         return Result.success();
     }
 
     @ApiOperation("更新标签")
     @PostMapping("/update")
-    public Result<String> updateTag(@RequestBody Tag tag){
-        tagService.update(tag);
+    public Result<String> updateTag(@RequestBody TagRequest request){
+        tagService.update(request.getTag());
         return Result.success();
     }
 
@@ -52,8 +53,8 @@ public class TagController {
     @ApiOperation("查询全部标签")
     @GetMapping("/queryAll/{currentPage}")
     public Result<PageResponse<Tag>> queryAll(
-            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false)Integer total,
-            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer size,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0")Integer total,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer size,
             @PathVariable Integer currentPage){
         System.out.println("current:"+ currentPage+",size:"+ size+",total:"+ total);
         TagQueryBo queryBo = new TagQueryBo(new PageQueryBo(currentPage, size ,total));
@@ -77,8 +78,8 @@ public class TagController {
     @GetMapping("/queryLikeName/{currentPage}")
     public Result<PageResponse<Tag>> queryLikeName(
             @RequestParam(ReqConstant.TAG_NAME_KEY) String name,
-            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false)Integer total,
-            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer size,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0")Integer total,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer size,
             @PathVariable Integer currentPage){
         TagQueryBo queryBo = new TagQueryBo(name, new PageQueryBo(currentPage, size, total));
         IPage<Tag> page = tagService.queryLikeName((TagQueryBo)queryBo.validate());

@@ -1,10 +1,10 @@
 package velore.aspect;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,19 +15,36 @@ import org.springframework.stereotype.Component;
  **/
 @Aspect
 @Component
+@Slf4j
 public class LogAspect {
 
-    private static final Logger logger = LogManager.getLogger(LogAspect.class);
-
-    @Around("execution(* *.controller.*(..))")
-    public Object logControllerParam(ProceedingJoinPoint point) throws Throwable {
+    public void logParam(JoinPoint point){
+        String className = point.getSignature().getDeclaringTypeName();
+        MethodSignature signature = (MethodSignature) point.getSignature();
+        String[] argsName = signature.getParameterNames();
         String methodName = point.getSignature().getName();
         Object[] args = point.getArgs();
-        StringBuilder builder = new StringBuilder().append(methodName).append("(");
-        for(Object o : args){
-            builder.append(o.toString());
+        StringBuilder builder = new StringBuilder()
+                .append(className).append(".")
+                .append(methodName).append("(\n\t");
+        for(int i = 0 ,size = args.length;i<size;i++){
+            builder.append(argsName[i]).append(":").append(args[i].toString());
+            if (i != size - 1) {
+                builder.append("\n\t");
+            }
         }
-        logger.info(builder.append(")").toString());
-        return point.proceed();
+        String info = builder.append("\n)").toString();
+        System.out.println(info);
+        log.info(info);
+    }
+
+    @Before("execution(* velore.controller..*(..))")
+    public void logControllerParam(JoinPoint point) {
+        logParam(point);
+    }
+
+    @Before("execution(* velore.service..*(..))")
+    public void logServiceParam(JoinPoint point) {
+        logParam(point);
     }
 }

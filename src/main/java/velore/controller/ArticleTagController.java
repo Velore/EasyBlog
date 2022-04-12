@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.bo.PageQueryBo;
 import velore.constants.ReqConstant;
-import velore.po.ArticleTag;
 import velore.po.Tag;
 import velore.service.base.ArticleTagService;
-import velore.vo.PageResponse;
+import velore.utils.TokenUtil;
 import velore.vo.ArticleBrief;
+import velore.vo.PageResponse;
+import velore.vo.request.ArticleTagRequest;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,8 +33,9 @@ public class ArticleTagController {
     @PostMapping("/add")
     public Result<String> addArticleTag(
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
-            @RequestBody ArticleTag tag){
-        articleTagService.add(token, tag);
+            @RequestBody ArticleTagRequest request){
+        assert TokenUtil.isAdmin(token):"权限不足";
+        articleTagService.add(request.getArticleTag());
         return Result.success();
     }
 
@@ -42,7 +44,8 @@ public class ArticleTagController {
     public Result<String> deleteArticleTag(
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody Integer id){
-        articleTagService.delete(token, id);
+        assert TokenUtil.isAdmin(token):"权限不足";
+        articleTagService.delete(id);
         return Result.success();
     }
 
@@ -57,8 +60,8 @@ public class ArticleTagController {
     @GetMapping("/queryLikeName/{currentPage}")
     public Result<PageResponse<ArticleBrief>> queryArticleTagByTagId(
             @RequestParam(ReqConstant.TAG_ID_KEY) Integer tagId,
-            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, required = false) Integer totalRecord,
-            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, required = false) Integer pageSize,
+            @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0") Integer totalRecord,
+            @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer pageSize,
             @PathVariable Integer currentPage){
         PageQueryBo queryBo = new PageQueryBo(currentPage, pageSize, totalRecord);
         return Result.success(new PageResponse<>(articleTagService.queryByTagId(tagId, queryBo.validate())));

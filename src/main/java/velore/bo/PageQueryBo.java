@@ -30,12 +30,12 @@ public class PageQueryBo {
      * @return queryBo
      */
     public PageQueryBo validate(){
-        pageSize = (pageSize == null) ? ReqConstant.PAGE_SIZE : pageSize;
+        pageSize = (pageSize == null || pageSize <= 0) ? ReqConstant.PAGE_SIZE : pageSize;
         // totalRecord == null 表示 需要查询数据库获取总记录数,设置为0
-        currentPage = (currentPage == null) ? 0 : (currentPage <= 0) ? 1 : currentPage;
+        currentPage = (currentPage == null || currentPage <= 0) ? 1 : currentPage;
         totalRecord = (totalRecord == null) ? 0 : totalRecord;
         if(totalRecord != 0){
-            currentPage %= Math.min(totalRecord/pageSize, currentPage+1);
+            currentPage %= Math.min(totalRecord/pageSize, currentPage + 1);
         }
         return this;
     }
@@ -45,14 +45,14 @@ public class PageQueryBo {
      * @param t t
      * @param <T> T
      */
-    public static <T extends PageQueryBo> void validate(T t){
-        t.setPageSize((t.getPageSize() == null) ? ReqConstant.PAGE_SIZE : t.getPageSize());
-        t.setCurrentPage((t.getCurrentPage() == null) ? 0 : (t.getCurrentPage() <= 0) ? 1 : t.getCurrentPage());
-        t.setTotalRecord((t.getTotalRecord() == null) ? 0 : t.getTotalRecord());
-        if(t.getTotalRecord() != 0){
-            t.setCurrentPage(t.getCurrentPage() & Math.min(t.getTotalRecord()/t.getPageSize(), t.getCurrentPage()+1));
-        }
-    }
+//    public static <T extends PageQueryBo> void validate(T t){
+//        t.setPageSize((t.getPageSize() == null) ? ReqConstant.PAGE_SIZE : t.getPageSize());
+//        t.setCurrentPage((t.getCurrentPage() == null) ? 0 : (t.getCurrentPage() <= 0) ? 1 : t.getCurrentPage());
+//        t.setTotalRecord((t.getTotalRecord() == null) ? 0 : t.getTotalRecord());
+//        if(t.getTotalRecord() != 0){
+//            t.setCurrentPage(t.getCurrentPage() & Math.min(t.getTotalRecord()/t.getPageSize(), t.getCurrentPage()+1));
+//        }
+//    }
 
 
     /**

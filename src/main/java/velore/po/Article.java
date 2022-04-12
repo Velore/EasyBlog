@@ -1,17 +1,12 @@
 package velore.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
-import velore.utils.TokenUtil;
-import velore.vo.request.ArticleRequest;
 
 import java.time.LocalDateTime;
 
@@ -19,14 +14,13 @@ import java.time.LocalDateTime;
  * @author Velore
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
 @TableName("article")
 @ApiModel("文章")
 @Alias("Article")
-public class Article extends ModifiedRecord implements Comparable<Article>{
+public class Article implements Comparable<Article>{
 
     /**
      * blog id
@@ -86,6 +80,12 @@ public class Article extends ModifiedRecord implements Comparable<Article>{
      */
     private LocalDateTime publishTime;
 
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
     @Override
     public int compareTo(Article o) {
         // views排序权值2
@@ -97,14 +97,5 @@ public class Article extends ModifiedRecord implements Comparable<Article>{
         int[] rank2 = (o.recommend)?
                 new int[]{baseRank[0]*recommendRank, baseRank[1]*recommendRank} :baseRank;
         return (this.views*rank1[0] + this.likeNum*rank1[1] - o.views*rank2[0] - o.likeNum*rank2[1])%2;
-    }
-
-    public Article(String token, ArticleRequest request){
-        articleType = request.getArticleType();
-        userId = TokenUtil.getTokenId(token);
-        title = request.getTitle();
-        content = request.getContent();
-        visible = request.getVisible();
-        commentable = request.getCommentable();
     }
 }
