@@ -29,7 +29,7 @@ public class CommentController {
             @RequestHeader(ReqConstant.TOKEN_KEY)String token,
             @RequestBody CommentRequest request){
         commentService.add(request.getComment(token));
-        return Result.success();
+        return Result.success("评论发布成功");
     }
 
     @ApiOperation("删除评论")
@@ -38,7 +38,7 @@ public class CommentController {
             @RequestHeader(ReqConstant.TOKEN_KEY)String token,
             @RequestBody Integer id){
         commentService.delete(token, id);
-        return Result.success();
+        return Result.success("评论删除成功");
     }
 //
 //    @ApiOperation("根据id查询评论")

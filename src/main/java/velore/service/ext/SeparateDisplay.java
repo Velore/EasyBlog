@@ -12,7 +12,7 @@ import java.util.List;
 public interface SeparateDisplay<T> {
 
     /**
-     * 返回可展示对象的简要信息<br/>
+     * 返回可展示对象的简要信息,
      * 一般用于首页或者其他页面展示列表
      * @param t t
      * @return brief
@@ -20,8 +20,8 @@ public interface SeparateDisplay<T> {
     Object displayBrief(T t);
 
     /**
-     * 一次返回多个Brief<br/>
-     * 使用selectBatch一次查询多条,速度更快<br/>
+     * 一次返回多个Brief;
+     * 使用selectBatch一次查询多条,速度更快;
      * 如果不能保证返回的一定是brief list,则不建议使用该方法
      * @param list Object list
      * @return (Object)brief list
@@ -37,7 +37,7 @@ public interface SeparateDisplay<T> {
     Object displayInfo(T t);
 
     /**
-     * 返回可展示对象的具体信息<br/>
+     * 返回可展示对象的具体信息;
      * 展示对象中存在需要分页查询的属性
      * @param t t
      * @param queryBo queryBo

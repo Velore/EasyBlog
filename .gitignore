@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 out/
+JavaDoc/
 
 ### STS ###
 .apt_generated

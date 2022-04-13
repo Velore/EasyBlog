@@ -1,9 +1,11 @@
 package velore.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import velore.constants.ArticleConstant;
 import velore.po.Article;
 import velore.po.User;
@@ -11,7 +13,7 @@ import velore.po.User;
 import java.time.LocalDateTime;
 
 /**
- * 用于首页或其他页面展示文章列表<br/>
+ * 用于首页或其他页面展示文章列表,
  * 以list形式作为PageResponse的属性
  * @author Velore
  * @date 2022/4/4
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("文章简要Response")
+@ApiModel("文章简要")
 public class ArticleBrief {
 
     /**
@@ -37,7 +39,7 @@ public class ArticleBrief {
     /**
      * username
      */
-    private String author;
+    private String authorName;
 
     private Integer articleType;
 
@@ -50,6 +52,8 @@ public class ArticleBrief {
 
     private Integer likeNum;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime publishTime;
 
     /**
@@ -73,7 +77,7 @@ public class ArticleBrief {
     }
 
     public void setAuthor(User user) {
-        this.author = user.getUsername();
+        this.authorName = user.getUsername();
         this.authorId = user.getId();
     }
 }

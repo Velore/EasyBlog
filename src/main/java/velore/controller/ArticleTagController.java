@@ -36,7 +36,7 @@ public class ArticleTagController {
             @RequestBody ArticleTagRequest request){
         assert TokenUtil.isAdmin(token):"权限不足";
         articleTagService.add(request.getArticleTag());
-        return Result.success();
+        return Result.success("标签添加成功");
     }
 
     @ApiOperation("删除文章标签对应关系")
@@ -46,7 +46,7 @@ public class ArticleTagController {
             @RequestBody Integer id){
         assert TokenUtil.isAdmin(token):"权限不足";
         articleTagService.delete(id);
-        return Result.success();
+        return Result.success("标签删除成功");
     }
 
     @ApiOperation("根据文章id查询文章携带的标签")

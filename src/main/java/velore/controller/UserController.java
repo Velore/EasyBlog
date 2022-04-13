@@ -29,26 +29,31 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
-    @ApiOperation("hello")
-    @GetMapping("/hello")
-    public Result<String> hello(){
-        return Result.success("hello");
-    }
+//
+//    @ApiOperation("hello")
+//    @GetMapping("/hello")
+//    public Result<String> hello(){
+//        return Result.success("hello");
+//    }
 
     @ApiOperation("注册")
     @PostMapping("/register")
     public Result<String> register(@RequestBody UserLoginRequest loginRequest){
         userService.register(loginRequest);
-        return Result.success();
+        return Result.success("注册成功");
     }
 
     @ApiOperation("登录")
-    @PostMapping("/login")
+    @PutMapping("/login")
     public Result<String> login(@RequestBody UserLoginRequest loginRequest) {
         return Result.success(userService.login(loginRequest));
     }
 
+    /**
+     * 刷新token
+     * @param token token
+     * @return token
+     */
     @ApiOperation("刷新token")
     @GetMapping("/refresh")
     public Result<String> refresh(@RequestHeader(ReqConstant.TOKEN_KEY) String token){
@@ -73,7 +78,7 @@ public class UserController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody UserUpdateRequest updateRequest){
         userService.update(token, updateRequest);
-        return Result.success();
+        return Result.success("更新成功");
     }
 
     @ApiOperation("封禁用户")
@@ -82,7 +87,7 @@ public class UserController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestParam(ReqConstant.USER_ID_KEY) Integer userId){
         userService.ban(token, userId);
-        return Result.success();
+        return Result.success("封禁成功");
     }
 
     @ApiOperation("解封用户")
@@ -91,7 +96,7 @@ public class UserController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestParam(ReqConstant.USER_ID_KEY) Integer userId){
         userService.permit(token, userId);
-        return Result.success();
+        return Result.success("解封成功");
     }
 
     @ApiOperation("根据限定条件查询用户")
@@ -100,7 +105,7 @@ public class UserController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody UserQueryBo queryBo){
         if(!TokenUtil.isAdmin(token)){
-            return Result.fail(ResultType.NO_PERMIT);
+            return Result.fail(ResultType.ILLEGAL_REQUEST);
         }
         return Result.success(new PageResponse<>(userService.queryByQueryBo((UserQueryBo)queryBo.validate())));
     }

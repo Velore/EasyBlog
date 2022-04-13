@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Throwable.class)
     public Result<String> handleThrowable(Throwable e) {
-        String brief = e.fillInStackTrace().toString();
-        String details = e.toString();
+        String brief = e.toString();
+        String details = e.fillInStackTrace().toString();
         if (brief == null || "".equals(brief)) {
             return Result.fail(ResultType.SYSTEM_ERROR, details);
         }

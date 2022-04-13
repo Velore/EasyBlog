@@ -42,7 +42,7 @@ public class ArticleController {
             @RequestBody ArticleRequest request){
         ArticleServiceImpl service = (ArticleServiceImpl)articleService;
         service.draft(request.getArticle(token));
-        return Result.success();
+        return Result.success("已保存至草稿");
     }
 
     @ApiOperation("发布文章")
@@ -52,7 +52,7 @@ public class ArticleController {
             @RequestBody ArticleRequest request){
         ArticleServiceImpl service = (ArticleServiceImpl)articleService;
         service.publish(request.getArticle(token));
-        return Result.success();
+        return Result.success("发布成功");
     }
 
     @ApiOperation("删除文章")
@@ -61,7 +61,7 @@ public class ArticleController {
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody Integer id){
         articleService.delete(token, id);
-        return Result.success();
+        return Result.success("删除成功");
     }
 
     @ApiOperation("文章浏览量+1")
@@ -69,7 +69,7 @@ public class ArticleController {
     public Result<String> view(@PathVariable Integer id){
         ArticleServiceImpl service = (ArticleServiceImpl) articleService;
         service.view(id);
-        return Result.success();
+        return Result.success("浏览量+1");
     }
 
     @ApiOperation("文章点赞量+1")
@@ -77,7 +77,7 @@ public class ArticleController {
     public Result<String> like(@PathVariable Integer id){
         ArticleServiceImpl service = (ArticleServiceImpl) articleService;
         service.like(id);
-        return Result.success();
+        return Result.success("点赞成功");
     }
 
     @ApiOperation("根据id查询文章")

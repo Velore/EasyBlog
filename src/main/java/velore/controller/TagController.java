@@ -33,21 +33,21 @@ public class TagController {
     @PutMapping("/add")
     public Result<String> addTag(@RequestBody TagRequest request){
         tagService.add(request.getTag());
-        return Result.success();
+        return Result.success("新增标签");
     }
 
     @ApiOperation("更新标签")
     @PostMapping("/update")
     public Result<String> updateTag(@RequestBody TagRequest request){
         tagService.update(request.getTag());
-        return Result.success();
+        return Result.success("更新成功");
     }
 
     @ApiOperation("删除标签")
     @DeleteMapping("/delete")
     public Result<String> deleteTag(@RequestBody Integer id){
         tagService.delete(id);
-        return Result.success();
+        return Result.success("删除成功");
     }
 
     @ApiOperation("查询全部标签")
@@ -56,7 +56,6 @@ public class TagController {
             @RequestParam(value = ReqConstant.TOTAL_RECORD_KEY, defaultValue = "0")Integer total,
             @RequestParam(value = ReqConstant.PAGE_SIZE_KEY, defaultValue = "0") Integer size,
             @PathVariable Integer currentPage){
-        System.out.println("current:"+ currentPage+",size:"+ size+",total:"+ total);
         TagQueryBo queryBo = new TagQueryBo(new PageQueryBo(currentPage, size ,total));
         IPage<Tag> page = tagService.queryLikeName((TagQueryBo)queryBo.validate());
         return Result.success(new PageResponse<>(page));

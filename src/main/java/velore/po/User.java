@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
-import utils.Md5Util;
-import velore.vo.request.UserLoginRequest;
 
 import java.time.LocalDateTime;
 

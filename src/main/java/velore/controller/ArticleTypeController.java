@@ -32,21 +32,21 @@ public class ArticleTypeController {
     @PostMapping("/add")
     public Result<String> addArticleType(@RequestBody ArticleType type){
         articleTypeService.add(type);
-        return Result.success();
+        return Result.success("新增成功");
     }
 
     @ApiOperation("更新文章类型")
     @PostMapping("/update")
     public Result<String> updateArticleType(@RequestBody ArticleType type){
         articleTypeService.update(type);
-        return Result.success();
+        return Result.success("更新成功");
     }
 
     @ApiOperation("删除文章类型")
     @DeleteMapping("/delete")
     public Result<String> deleteArticleType(@RequestBody Integer id){
         articleTypeService.delete(id);
-        return Result.success();
+        return Result.success("删除成功");
     }
 
     @ApiOperation("根据id查询文章类型")
