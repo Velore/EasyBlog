@@ -56,14 +56,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Object displayBrief(List<Article> articles) {
-        int size = articles.size();
-        List<ArticleBrief> briefList = new ArrayList<>(size+1);
+        if(articles == null || articles.isEmpty()){
+            return new ArrayList<ArticleBrief>();
+        }
+        List<ArticleBrief> briefList = new ArrayList<>(articles.size()+1);
         for (Article article : articles) {
             briefList.add(new ArticleBrief().setDependAttributes(article));
         }
         List<User> authorList = userService.getBaseMapper().selectBatchIds(articles.stream()
                 .map(Article::getUserId).collect(Collectors.toList()));
-        for(int i = 0 ; i<size ; i++){
+        for(int i = 0 , size = authorList.size(); i<size ; i++){
             briefList.get(i).setAuthor(authorList.get(i));
         }
         return briefList;
@@ -89,7 +91,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public boolean draft(Article article) {
         article.setStatus(ArticleConstant.ARTICLE_STATUS_DRAFT);
         //文章不存在
-        if(articleService.queryById(article.getId())==null){
+        if(article.getId()==null || articleService.queryById(article.getId())==null){
             return articleService.add(article);
         }
         //文章存在
@@ -105,7 +107,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setStatus(ArticleConstant.ARTICLE_STATUS_PUBLISHED);
         article.setPublishTime(LocalDateTime.now());
         //文章不存在
-        if(articleService.queryById(article.getId())==null){
+        if(article.getId()==null || articleService.queryById(article.getId())==null){
             return articleService.add(article);
         }
         //文章存在
@@ -187,7 +189,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public boolean recommend(String token, Integer articleId) {
+    public boolean recommend(Integer articleId) {
         Article article = articleService.queryById(articleId);
         article.setRecommend(true);
         return articleService.update(article);
@@ -248,20 +250,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public IPage<Article> queryByQueryBo(ArticleQueryBo queryBo) {
         IPage<Article> page = queryBo.getPage();
         LambdaQueryChainWrapper<Article> wrapper = new LambdaQueryChainWrapper<>(this.baseMapper);
-        //默认不显示隐藏文章
-        boolean isVisible = false;
         if(queryBo.getArticleTypeId()!=null){
             wrapper.eq(Article::getArticleType, queryBo.getArticleTypeId());
         }
         if(queryBo.getUserId()!=null){
-            //用户可查看自己的隐藏文章
-            isVisible = true;
             wrapper.eq(Article::getUserId, queryBo.getUserId());
         }else{
-            //否则只查询已发布文章
+            //默认只查询已发布,而且可查看的文章
             wrapper.eq(Article::getStatus, ArticleConstant.ARTICLE_STATUS_PUBLISHED);
+            //默认不显示隐藏文章
+            wrapper.eq(Article::getVisible, true);
         }
-        wrapper.eq(Article::getVisible, isVisible);
         if(queryBo.getTitle()!=null){
             wrapper.like(Article::getTitle, queryBo.getTitle());
         }
@@ -269,7 +268,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             wrapper.ge(Article::getPublishTime, queryBo.getPublishAfter());
         }
         if(queryBo.getPublishBefore()!=null){
-            wrapper.le(Article::getPublishTime, queryBo.getPublishAfter());
+            wrapper.le(Article::getPublishTime, queryBo.getPublishBefore());
         }
         return baseMapper.selectPage(page, wrapper.getWrapper());
     }

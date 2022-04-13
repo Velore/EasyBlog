@@ -36,10 +36,10 @@ create table if not exists article(
     id int not null primary key auto_increment,
     article_type int not null default 1 comment '文章类型',
     user_id int not null comment '作者id',
-    title varchar(16) not null comment '文章标题',
+    title varchar(16) not null default 'title' comment '文章标题',
     content text not null comment '文章内容',
-    views int not null comment '浏览量',
-    like_num int not null comment '点赞数',
+    views int not null default 0 comment '浏览量',
+    like_num int not null default 0 comment '点赞数',
     # 默认允许浏览
     visible int not null default 1 comment '1允许浏览,0禁止浏览',
     # 默认允许评论

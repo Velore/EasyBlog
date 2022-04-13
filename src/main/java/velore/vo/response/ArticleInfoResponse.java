@@ -33,14 +33,6 @@ public class ArticleInfoResponse {
 
     private List<Comment> comments;
 
-    private void setAuthorId(Integer authorId){
-        this.authorId = authorId;
-    }
-
-    private void setAuthorName(String authorName){
-        this.authorName = authorName;
-    }
-
     public void setAuthor(User user){
         this.authorId = user.getId();
         this.authorName = user.getUsername();

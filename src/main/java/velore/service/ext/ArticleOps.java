@@ -74,9 +74,8 @@ public interface ArticleOps {
 
     /**
      * 设置文章为推荐文章
-     * @param token token
      * @param id id
      * @return boolean
      */
-    boolean recommend(String token, Integer id);
+    boolean recommend(Integer id);
 }

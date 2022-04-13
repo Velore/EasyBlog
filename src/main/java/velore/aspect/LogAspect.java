@@ -35,7 +35,7 @@ public class LogAspect {
         }
         String info = builder.append("\n)").toString();
         System.out.println(info);
-        log.info(info);
+        log.warn(info);
     }
 
     @Before("execution(* velore.controller..*(..))")

@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
+import result.ResultType;
 import velore.bo.ArticleQueryBo;
 import velore.bo.PageQueryBo;
 import velore.constants.ReqConstant;
@@ -12,6 +13,7 @@ import velore.po.Article;
 import velore.service.base.ArticleService;
 import velore.service.Impl.ArticleServiceImpl;
 import velore.utils.CastUtil;
+import velore.utils.TokenUtil;
 import velore.vo.PageResponse;
 import velore.vo.ArticleBrief;
 import velore.vo.request.ArticleRequest;
@@ -64,6 +66,10 @@ public class ArticleController {
         return Result.success("删除成功");
     }
 
+    /**
+     * @param id id
+     * @return result
+     */
     @ApiOperation("文章浏览量+1")
     @GetMapping("/view/{id}")
     public Result<String> view(@PathVariable Integer id){
@@ -72,12 +78,34 @@ public class ArticleController {
         return Result.success("浏览量+1");
     }
 
+    /**
+     * 需要token来保证点赞用户已登录
+     * @param token token
+     * @param id id
+     * @return result
+     */
     @ApiOperation("文章点赞量+1")
     @GetMapping("/like/{id}")
-    public Result<String> like(@PathVariable Integer id){
+    public Result<String> like(
+            @RequestHeader(ReqConstant.TOKEN_KEY)String token,
+            @PathVariable Integer id){
+        if(TokenUtil.isAbandoned(token)){
+            return Result.fail(ResultType.NO_PERMIT, "用户已删除,请联系管理员");
+        }
         ArticleServiceImpl service = (ArticleServiceImpl) articleService;
         service.like(id);
         return Result.success("点赞成功");
+    }
+
+    @PutMapping("/recommend/{id}")
+    public Result<String> recommend(
+            @RequestHeader(ReqConstant.TOKEN_KEY)String token,
+            @PathVariable Integer id){
+        if(!TokenUtil.isAdmin(token)){
+            return Result.fail(ResultType.ILLEGAL_REQUEST, "只有管理员可以设置推荐");
+        }
+        articleService.recommend(id);
+        return Result.success("已设置为推荐文章");
     }
 
     @ApiOperation("根据id查询文章")
@@ -94,14 +122,15 @@ public class ArticleController {
     }
 
     @ApiOperation("随机查询指定数量的文章")
-    @GetMapping("/queryRandom/{num}")
-    public Result<List<ArticleBrief>> queryRandom(@PathVariable Integer num){
+    @GetMapping("/queryRandom")
+    public Result<List<ArticleBrief>> queryRandom(@RequestParam("num") Integer num){
         List<Article> articles = articleService.queryRandom(num);
-        List<ArticleBrief> briefResponses = new ArrayList<>();
-        for(Article article : articles){
-            briefResponses.add((ArticleBrief) articleService.displayBrief(article));
-        }
-        return Result.success(briefResponses);
+        List<ArticleBrief> briefResponse = new ArrayList<>(CastUtil.cast(
+                articleService.displayBrief(articles), ArticleBrief.class));
+//        for(Article article : articles){
+//            briefResponses.add((ArticleBrief) articleService.displayBrief(article));
+//        }
+        return Result.success(briefResponse);
     }
 
     @ApiOperation("条件查询文章")

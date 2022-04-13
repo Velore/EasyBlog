@@ -30,28 +30,30 @@ public class PageQueryBo {
      * @return queryBo
      */
     public PageQueryBo validate(){
+        //保证pageSize为有效大小
         pageSize = (pageSize == null || pageSize <= 0) ? ReqConstant.PAGE_SIZE : pageSize;
         // totalRecord == null 表示 需要查询数据库获取总记录数,设置为0
-        currentPage = (currentPage == null || currentPage <= 0) ? 1 : currentPage;
         totalRecord = (totalRecord == null) ? 0 : totalRecord;
-        if(totalRecord != 0){
-            currentPage %= Math.min(totalRecord/pageSize, currentPage + 1);
-        }
+        currentPage = (currentPage == null || currentPage <= 0) ? 1 : currentPage;
+        //若传入的currentPage太大,则返回最后一页
+        //如果需要查询数据库获取总记录数或者总记录数小于一页,则返回第一页
+        int lastPage = (totalRecord/pageSize == 0) ? 1 : (totalRecord/pageSize)+1;
+        currentPage = (currentPage > lastPage)? lastPage : currentPage;
         return this;
     }
 
     /**
      * 第二种整理数据的方式
+     * 处理逻辑与第一种相同
      * @param t t
      * @param <T> T
      */
 //    public static <T extends PageQueryBo> void validate(T t){
 //        t.setPageSize((t.getPageSize() == null) ? ReqConstant.PAGE_SIZE : t.getPageSize());
-//        t.setCurrentPage((t.getCurrentPage() == null) ? 0 : (t.getCurrentPage() <= 0) ? 1 : t.getCurrentPage());
 //        t.setTotalRecord((t.getTotalRecord() == null) ? 0 : t.getTotalRecord());
-//        if(t.getTotalRecord() != 0){
-//            t.setCurrentPage(t.getCurrentPage() & Math.min(t.getTotalRecord()/t.getPageSize(), t.getCurrentPage()+1));
-//        }
+//        t.setCurrentPage((t.getCurrentPage() == null) ? 0 : (t.getCurrentPage() <= 0) ? 1 : t.getCurrentPage());
+//        int lastPage = (t.getTotalRecord()/t.getPageSize() == 0) ? 1 : (t.getTotalRecord()/t.getPageSize())+1;
+//        t.setCurrentPage((t.getCurrentPage() > lastPage) ? lastPage : t.getCurrentPage();
 //    }
 
 

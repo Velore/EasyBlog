@@ -141,7 +141,7 @@ public class TokenUtil {
      * @param token token
      * @return boolean
      */
-    public static boolean isAvailable(String token){
+    public static boolean isAbandoned(String token){
         return getTokenAuth(token) == UserType.DELETE.getValue();
     }
 
@@ -152,7 +152,7 @@ public class TokenUtil {
      * @return boolean
      */
     public static boolean isPermitted(String token, Integer userId){
-        if(!isAvailable(token)) {
+        if(isAbandoned(token)) {
             return false;
         }
         return isAdmin(token) || getTokenId(token) == userId;

@@ -18,6 +18,7 @@ import velore.vo.request.UserLoginRequest;
 import velore.vo.request.UserUpdateRequest;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 
 /**
  * @author Velore
@@ -52,6 +53,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!Md5Util.verify(loginRequest.getPassword(), user.getPassword())){
             throw new InvalidParamException("密码错误");
         }
+        user.setLastLoginTime(LocalDateTime.now());
+        userService.updateById(user);
         return TokenUtil.generate(user);
     }
 
@@ -105,6 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(updateRequest.getAvatar() !=null){
             user.setAvatar(updateRequest.getAvatar());
         }
+        user.setLastLoginTime(LocalDateTime.now());
     }
 
     @Override

@@ -81,16 +81,14 @@ public class Article implements Comparable<Article>{
      * 用于排序
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime publishTime;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
@@ -105,5 +103,9 @@ public class Article implements Comparable<Article>{
         int[] rank2 = (o.recommend)?
                 new int[]{baseRank[0]*recommendRank, baseRank[1]*recommendRank} :baseRank;
         return (this.views*rank1[0] + this.likeNum*rank1[1] - o.views*rank2[0] - o.likeNum*rank2[1])%2;
+    }
+
+    public void clearId(){
+        id = null;
     }
 }
