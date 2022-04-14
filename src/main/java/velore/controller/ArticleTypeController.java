@@ -51,7 +51,7 @@ public class ArticleTypeController {
 
     @ApiOperation("根据id查询文章类型")
     @GetMapping("/queryById")
-    public Result<ArticleType> queryById(@RequestParam(ReqConstant.ARTICLE_ID_KEY) Integer id){
+    public Result<ArticleType> queryById(@RequestParam(ReqConstant.ARTICLE_TYPE_ID_KEY) Integer id){
         return Result.success(articleTypeService.queryById(id));
     }
 

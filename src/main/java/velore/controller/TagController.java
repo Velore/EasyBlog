@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
+import result.ResultType;
 import velore.bo.PageQueryBo;
 import velore.bo.TagQueryBo;
 import velore.constants.ReqConstant;
@@ -38,8 +39,8 @@ public class TagController {
 
     @ApiOperation("更新标签")
     @PostMapping("/update")
-    public Result<String> updateTag(@RequestBody TagRequest request){
-        tagService.update(request.getTag());
+    public Result<String> updateTag(@RequestBody Tag tag){
+        tagService.update(tag);
         return Result.success("更新成功");
     }
 
@@ -70,6 +71,9 @@ public class TagController {
     @ApiOperation("查询指定数量的随机标签")
     @GetMapping("/queryRandom/{num}")
     public Result<List<Tag>> queryRandom(@PathVariable Integer num){
+        if(num <= 0){
+            return Result.fail(ResultType.INVALID_PARAM);
+        }
         return Result.success(tagService.queryRandom(num));
     }
 

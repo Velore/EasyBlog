@@ -34,6 +34,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         if(!articleService.queryById(comment.getArticleId()).getCommentable()){
             throw new IllegalRequestException("当前文章不允许评论");
         }
+        comment.setId(null);
         return baseMapper.insert(comment);
     }
 

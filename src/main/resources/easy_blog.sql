@@ -59,7 +59,7 @@ create table if not exists tag(
     id int not null primary key auto_increment,
     name varchar(16) not null comment '标签名',
     description varchar(100) null default null comment '标签描述',
-    article_num int not null comment '使用该标签的文章数量'
+    article_num int not null default 0 comment '使用该标签的文章数量'
 )comment '标签';
 
 drop table if exists comment;

@@ -2,7 +2,6 @@ package velore.service.Impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +33,8 @@ public class ArticleTypeServiceImpl extends ServiceImpl<ArticleTypeMapper, Artic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int add(ArticleType type) {
+        type.setArticleNum(0);
+        type.setId(null);
         return baseMapper.insert(type);
     }
 

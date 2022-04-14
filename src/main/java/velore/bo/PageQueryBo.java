@@ -33,28 +33,31 @@ public class PageQueryBo {
         //保证pageSize为有效大小
         pageSize = (pageSize == null || pageSize <= 0) ? ReqConstant.PAGE_SIZE : pageSize;
         // totalRecord == null 表示 需要查询数据库获取总记录数,设置为0
+        // totalRecord不设置最大值检查, 理论上可以是int的最大值, 但是建议对其进行处理
         totalRecord = (totalRecord == null) ? 0 : totalRecord;
+        //currentPage可以为null, 但是不建议为null
+        // 因此在Controller层设置了非null处理
         currentPage = (currentPage == null || currentPage <= 0) ? 1 : currentPage;
         //若传入的currentPage太大,则返回最后一页
         //如果需要查询数据库获取总记录数或者总记录数小于一页,则返回第一页
-        int lastPage = (totalRecord/pageSize == 0) ? 1 : (totalRecord/pageSize)+1;
+        //(totalRecord % pageSize == 0) ? 0 : 1
+        // 表示如果totalRecord可以被pageSize除尽,说明除法的结果已经是最后一页
+        // 如果除不尽,则说明该页后面还存在数据,需要结果+1才是最后一页
+        int lastPage = (totalRecord/pageSize == 0) ?
+                1 : (totalRecord/pageSize) + ((totalRecord % pageSize == 0) ? 0 : 1);
         currentPage = (currentPage > lastPage)? lastPage : currentPage;
         return this;
     }
 
     /**
-     * 第二种整理数据的方式
-     * 处理逻辑与第一种相同
+     * 第二种整理数据的方式,
+     * 内部处理逻辑为queryBo.validate()
      * @param t t
      * @param <T> T
      */
-//    public static <T extends PageQueryBo> void validate(T t){
-//        t.setPageSize((t.getPageSize() == null) ? ReqConstant.PAGE_SIZE : t.getPageSize());
-//        t.setTotalRecord((t.getTotalRecord() == null) ? 0 : t.getTotalRecord());
-//        t.setCurrentPage((t.getCurrentPage() == null) ? 0 : (t.getCurrentPage() <= 0) ? 1 : t.getCurrentPage());
-//        int lastPage = (t.getTotalRecord()/t.getPageSize() == 0) ? 1 : (t.getTotalRecord()/t.getPageSize())+1;
-//        t.setCurrentPage((t.getCurrentPage() > lastPage) ? lastPage : t.getCurrentPage();
-//    }
+    public static <T extends PageQueryBo> void validate(T t){
+        t.validate();
+    }
 
 
     /**

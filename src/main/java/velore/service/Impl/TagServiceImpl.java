@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import velore.bo.TagQueryBo;
 import velore.dao.TagMapper;
+import velore.exception.InvalidParamException;
 import velore.po.Tag;
 import velore.service.base.TagService;
 
@@ -38,12 +40,16 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(Tag tag) {
+        if(tag.getId() == null || tagService.queryById(tag.getId()) == null){
+            throw new InvalidParamException("tagId为null 或 tag不存在");
+        }
         return baseMapper.updateById(tag);
     }
 
     @Override
     public int increase(Integer id) {
         Tag tag = tagService.queryById(id);
+        Assert.notNull(tag, "tag 不存在");
         tag.setArticleNum(tag.getArticleNum()+1);
         return tagService.update(tag);
     }
@@ -51,6 +57,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     public int decrease(Integer id) {
         Tag tag = tagService.queryById(id);
+        Assert.notNull(tag, "tag 不存在");
         tag.setArticleNum(tag.getArticleNum()-1);
         return tagService.update(tag);
     }

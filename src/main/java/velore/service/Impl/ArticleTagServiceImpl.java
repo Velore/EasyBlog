@@ -40,6 +40,7 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int add(ArticleTag articleTag) {
+        articleTag.setId(null);
         tagService.increase(articleTag.getTagId());
         return baseMapper.insert(articleTag);
     }
@@ -77,6 +78,9 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, Article
         List<Integer> articleIds = page.getRecords().stream()
                 .map(ArticleTag::getArticleId).collect(Collectors.toList());
         //类型转换
+        if(articleIds.isEmpty()){
+            return queryBo.getPage(new ArrayList<>());
+        }
         List<ArticleBrief> briefs = CastUtil.cast(
                 articleService.displayBrief(articleService.getBaseMapper().selectBatchIds(articleIds))
                 , ArticleBrief.class);

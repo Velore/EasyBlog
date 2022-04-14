@@ -46,4 +46,9 @@ public class ReqConstant {
      * article id
      */
     public static final String ARTICLE_ID_KEY = "articleId";
+
+    /**
+     * article type id
+     */
+    public static final String ARTICLE_TYPE_ID_KEY = "articleTypeId";
 }

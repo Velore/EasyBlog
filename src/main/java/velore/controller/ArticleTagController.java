@@ -2,6 +2,7 @@ package velore.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import result.Result;
 import velore.bo.PageQueryBo;
@@ -34,7 +35,7 @@ public class ArticleTagController {
     public Result<String> addArticleTag(
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody ArticleTagRequest request){
-        assert TokenUtil.isAdmin(token):"权限不足";
+        Assert.isTrue(TokenUtil.isAdmin(token) || TokenUtil.isOrdinary(token), "权限不足");
         articleTagService.add(request.getArticleTag());
         return Result.success("标签添加成功");
     }
@@ -44,7 +45,7 @@ public class ArticleTagController {
     public Result<String> deleteArticleTag(
             @RequestHeader(ReqConstant.TOKEN_KEY) String token,
             @RequestBody Integer id){
-        assert TokenUtil.isAdmin(token):"权限不足";
+        Assert.isTrue(TokenUtil.isAdmin(token), "权限不足");
         articleTagService.delete(id);
         return Result.success("标签删除成功");
     }

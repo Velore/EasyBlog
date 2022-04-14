@@ -203,6 +203,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean add(Article article) {
+        article.setId(null);
         return baseMapper.insert(article) == 1;
     }
 
